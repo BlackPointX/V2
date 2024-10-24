@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabela - SofaScore</title>
+    <link rel="stylesheet" href="alfa.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    
+    <header>
+        <div class="header-left">
+            <a href="mecze.html">
+                <img src="logo.png" alt="Logo SofaScore">
+            </a>
+        </div>
+        <div class="header-right">
+            <a href="mecze.html" style="color: #ffffff; text-decoration: none;">Mecze</a>
+            <img src="https://img.icons8.com/material-rounded/24/ffffff/search.png" alt="Szukaj">
+            <img src="https://img.icons8.com/material-rounded/24/ffffff/settings.png" alt="Ustawienia">
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="mecze.html">Wszystkie</a></li>
+            <li><a href="mecze.html">Na Żywo</a></li>
+            <li><a href="mecze.html">Moje Mecze</a></li>
+            <li class="active"><a href="tabela.html">Tabela</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section class="table-container">
+            <table class="league-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="first-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                     
+                </tbody>
+            </table>
+        </section>
+        <section class="table-container">
+            <table class="league-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="second-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        <div id="loading-spinner" class="loading-spinner">
+            <!-- Loader do wyświetlania w trakcie ładowania danych -->
+            <img src="https://img.freepik.com/premium-psd/realistic-soccer-ball-png_679658-11799.jpg" alt="Loading" class="soccer-ball-spinner">
+            <span>Ładowanie danych...</span>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-nav">
+            <div class="nav-item">
+                <a href="mecze.html">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/home.png" alt="Strona Główna">
+                    <span>Strona Główna</span>
+                </a>
+            </div>
+            <div class="nav-item active">
+                <a href="tabela.html">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
+                    <span>Tabela</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <img src="https://img.icons8.com/material-rounded/24/ffffff/star.png" alt="Ulubione">
+                <span>Ulubione</span>
+            </div>
+            <div class="nav-item">
+                <img src="https://img.icons8.com/material-rounded/24/ffffff/user.png" alt="Profil">
+                <span>Profil</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
