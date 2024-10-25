@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     homePlayerScore = mainHomeScore;
                     awayPlayerScore = mainAwayScore;
         
-                    // Apply winner-circle class based on extraInfo (1 for home, 2 for away)
                     if (extraInfo === "1") {
                         homePlayerClass = "winner-circle";
                     } else if (extraInfo === "2") {
@@ -111,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     awayLogo: match[4],
                     homeScore: `<span class="${homeScoreClass}" style="color:${homeColor}">${homeScore}</span>`,
                     awayScore: `<span class="${awayScoreClass}" style="color:${awayColor}">${awayScore}</span>`,
-                    playerResults: [player1, player2, player3, player4]
+                    playerResults: [player1, player2, player3, player4],
+                    endOfKolejka: match[10] // Dodajemy endOfKolejka do wyniku meczu
                 };
             });
         }
@@ -120,31 +120,39 @@ document.addEventListener('DOMContentLoaded', () => {
             let currentKolejka = 1;
             let matchesForKolejka = document.createElement('div');
             matchesForKolejka.classList.add('matches-for-kolejka');
-
+        
             function createKolejkaSection(kolejkaNumber) {
                 const kolejkaDivider = document.createElement('section');
                 kolejkaDivider.classList.add('date-divider');
-                kolejkaDivider.textContent = `Kolejka ${kolejkaNumber}`;
+                kolejkaDivider.innerHTML = `
+                    <span>Kolejka ${kolejkaNumber}</span>
+                    <div class="avatars-container">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Mariusz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/%C5%81ukasz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Mateusz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Patryk.png" alt="Avatar" class="avatar-small">
+                    </div>
+                `;
                 matchesContainer.appendChild(kolejkaDivider);
-
+        
                 matchesForKolejka = document.createElement('div');
                 matchesForKolejka.classList.add('matches-for-date');
                 matchesContainer.appendChild(matchesForKolejka);
             }
-
+        
             // Tworzymy początkową kolejkę
             createKolejkaSection(currentKolejka);
-
+        
             matches.forEach((match, index) => {
                 const matchElement = document.createElement('section');
                 matchElement.classList.add('match');
-
+        
                 matchElement.innerHTML = `
                     <div class="league-info">
                         <img class="league-logo" src="${match.leagueLogo}" alt="Logo ${match.homeTeam}">
                         <span class="league-name">${match.leagueName}</span>
                     </div>
-
+        
                     <div class="match-info">
                         <div class="left-section">
                             <div class="match-time-status">
@@ -168,43 +176,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="vertical-separator"></div>
                         
-                        <div class="score-player">
-                            <span class="score-home" style="margin-bottom: 5px;">${match.playerResults[0].homePlayer}</span>
-                            <span class="score-away" style="margin-bottom: 0px;">${match.playerResults[0].awayPlayer}</span>
-                        </div>
-
-                        <div class="vertical-separator-result"></div>
-                        
-                        <div class="score-player">
-                            <span class="score-home" style="margin-bottom: 5px;">${match.playerResults[1].homePlayer}</span>
-                            <span class="score-away" style="margin-bottom: 0px;">${match.playerResults[1].awayPlayer}</span>
-                        </div>
-
-                        <div class="vertical-separator-result"></div>
-                        
-                        <div class="score-player">
-                            <span class="score-home" style="margin-bottom: 5px;">${match.playerResults[2].homePlayer}</span>
-                            <span class="score-away" style="margin-bottom: 0px;">${match.playerResults[2].awayPlayer}</span>
-                        </div>
-
-                        <div class="vertical-separator-result"></div>
-                        
-                        <div class="score-player">
-                            <span class="score-home" style="margin-bottom: 5px;">${match.playerResults[3].homePlayer}</span>
-                            <span class="score-away" style="margin-bottom: 0px;">${match.playerResults[3].awayPlayer}</span>
-                        </div>
+                        ${match.playerResults.map((playerResult, i) => `
+                            <div class="score-player">
+                                <span class="score-home" style="margin-bottom: 5px;">${playerResult.homePlayer}</span>
+                                <span class="score-away" style="margin-bottom: 0px;">${playerResult.awayPlayer}</span>
+                            </div>
+                            ${i < match.playerResults.length - 1 ? '<div class="vertical-separator-result"></div>' : ''}
+                        `).join('')}
                     </div>
                 `;
-
+        
                 matchesForKolejka.appendChild(matchElement);
-
-                // Jeśli `match[10]` zawiera wartość, oznacza to koniec kolejki
-                if (match[10]) {
+        
+                if (match.endOfKolejka) {
                     currentKolejka++;
                     createKolejkaSection(currentKolejka);
                 }
             });
         }
+        
 
         async function init() {
             const apiData = await fetchMatchData();
