@@ -37,16 +37,23 @@
 
 
 html, body {
-    height: 100%;
+    height: 100%; /* Full page height */
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 body {
     background-color: #2C3E50; /* Nieco jaśniejsze tło z niebiesko-szarym odcieniem */
     color: #ffffff;
     font-family: 'SofascoreSans', sans-serif;
+}
+
+main {
+    flex: 1; /* Allows main content to grow and push footer down */
     display: flex;
     flex-direction: column;
+    overflow: visible; /* No restrictions on main content */
 }
 
 header {
@@ -91,12 +98,6 @@ nav li.active {
     border-bottom: 2px solid #3498DB;
 }
 
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
 
 
 .matches-container {
@@ -232,6 +233,9 @@ main {
 
 footer {
     background-color: #34495E;
+    position: relative; /* Ensure footer does not overlap content */
+    width: 100%;
+    margin-top: 20px;
 }
 
 .footer-nav {
@@ -271,7 +275,7 @@ footer {
     margin: 15px;
     background-color: #1A252F;
     border-radius: 8px;
-    overflow-x: auto;
+    overflow: visible;
 }
 
 .league-table {
