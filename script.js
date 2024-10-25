@@ -23,6 +23,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         'https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Patryk.png'
     ];
 
+    // Static mapping of players to their result columns in `Wyniki`
+    const playerIndexMapping = {
+        'Mariusz': 0,
+        'Łukasz': 1,
+        'Mateusz': 2,
+        'Patryk': 3
+    };
+
     function showLoader() {
         loader.style.display = 'flex';
     }
@@ -31,40 +39,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.style.display = 'none';
     }
 
-    async function fetchFirstTableData() {
-        const apiUrl = 'https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec';
+    async function fetchTableData(apiUrl) {
         try {
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error('Błąd podczas pobierania danych');
             }
             const data = await response.json();
-            return data.WWW;
+            return { players: data.WWW, matches: data.Wyniki.slice(1) }; // Skip header row in matches
         } catch (error) {
             console.error('Błąd podczas pobierania danych:', error);
             return null;
         }
     }
 
-    async function fetchSecondTableData() {
-        const apiUrl = 'https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec';
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error('Błąd podczas pobierania danych');
-            }
-            const data = await response.json();
-            return data.WWW;
-        } catch (error) {
-            console.error('Błąd podczas pobierania danych:', error);
-            return null;
-        }
-    }
+    function renderPlayerData(players, matches, tableBody) {
+        players.slice(1).forEach((player) => {
+            const playerName = player[2]; // Extract player name
+            const playerIndex = playerIndexMapping[playerName]; // Use the static index mapping
 
-    function renderPlayerData(players, tableBody) {
-        players.slice(1).forEach((player, index) => {
             const row = document.createElement('tr');
-            const avatarUrl = getPlayerAvatar(player[2]);
+            const avatarUrl = getPlayerAvatar(playerName);
             row.innerHTML = `
                 <td>
                     <div class="position-cell">
@@ -77,8 +72,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td>
                     <div class="name-cell">
-                        <img src="${avatarUrl}" alt="${player[2]}" class="player-avatar">
-                        <span>${player[2]}</span>
+                        <img src="${avatarUrl}" alt="${playerName}" class="player-avatar">
+                        <span>${playerName}</span>
                     </div>
                 </td>
                 <td>${player[3]}</td>
@@ -97,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             detailsRow.style.display = 'none';
             detailsRow.innerHTML = `
                 <td colspan="6">
-                    <div class="match-results">${generateRandomMatchResults()}</div>
+                    <div class="match-results">${generateMatchResults(matches, playerIndex)}</div>
                 </td>
             `;
 
@@ -133,41 +128,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function generateRandomMatchResults() {
-        const clubs = [
-           'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 1
-            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 2
-            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 3
-            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny'  // Sample logo 4
-        ];
+    function generateMatchResults(matches, playerIndex) {
         let results = '<div class="match-grid">';
-        for (let i = 0; i < 18; i++) {
-            const club1 = clubs[Math.floor(Math.random() * clubs.length)];
-            const club2 = clubs[Math.floor(Math.random() * clubs.length)];
-            const score1 = Math.floor(Math.random() * 5);
-            const score2 = Math.floor(Math.random() * 5);
+        matches.forEach(match => {
+            const playerScoreData = match[playerIndex];
+            const playerScore = playerScoreData.split('/')[0]; // Extract score before suffix
+            const suffix = playerScoreData.split('/')[1]; // Extract suffix for color
+
+            // Determine background color based on suffix
+            let backgroundColor;
+            switch (suffix) {
+                case 'y':
+                    backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Yellow, 80% opacity
+                    break;
+                case 'r':
+                    backgroundColor = 'rgba(255, 0, 0, 0.8)'; // Red, 80% opacity
+                    break;
+                case 'g':
+                    backgroundColor = 'rgba(0, 255, 0, 0.8)'; // Green, 80% opacity
+                    break;
+                default:
+                    backgroundColor = 'rgba(200, 200, 200, 0.8)'; // Default gray, 80% opacity
+            }
+
             results += `
-                <div class="match-result">
-                    <img src="${club1}" alt="Logo 1" class="club-logo">
-                    <span>${score1}:${score2}</span>
-                    <img src="${club2}" alt="Logo 2" class="club-logo">
+                <div class="match-result" style="background-color: ${backgroundColor};">
+                    <img src="${match[4]}" alt="Logo 1" class="club-logo">
+                    <span>${playerScore}</span>
+                    <img src="${match[5]}" alt="Logo 2" class="club-logo">
                 </div>
             `;
-        }
+        });
         results += '</div>';
         return results;
     }
 
     showLoader();
 
-    const firstTableData = await fetchFirstTableData();
+    const firstTableData = await fetchTableData('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec');
     if (firstTableData) {
-        renderPlayerData(firstTableData, firstTableBody);
+        renderPlayerData(firstTableData.players, firstTableData.matches, firstTableBody);
     }
 
-    const secondTableData = await fetchSecondTableData();
+    const secondTableData = await fetchTableData('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec');
     if (secondTableData) {
-        renderPlayerData(secondTableData, secondTableBody);
+        renderPlayerData(secondTableData.players, secondTableData.matches, secondTableBody);
     }
 
     hideLoader();
