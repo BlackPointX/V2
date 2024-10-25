@@ -23,17 +23,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         'https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Patryk.png'
     ];
 
-    // Funkcja pokazująca loader
     function showLoader() {
         loader.style.display = 'flex';
     }
 
-    // Funkcja ukrywająca loader
     function hideLoader() {
         loader.style.display = 'none';
     }
 
-    // Funkcja pobierająca dane z Google Sheets dla pierwszej tabeli
     async function fetchFirstTableData() {
         const apiUrl = 'https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec';
         try {
@@ -42,14 +39,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('Błąd podczas pobierania danych');
             }
             const data = await response.json();
-            return data.WWW; // Zwracamy dane zawodników
+            return data.WWW;
         } catch (error) {
             console.error('Błąd podczas pobierania danych:', error);
             return null;
         }
     }
 
-    // Funkcja pobierająca dane z Google Sheets dla drugiej tabeli
     async function fetchSecondTableData() {
         const apiUrl = 'https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec';
         try {
@@ -58,16 +54,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error('Błąd podczas pobierania danych');
             }
             const data = await response.json();
-            return data.WWW; // Zwracamy dane zawodników
+            return data.WWW;
         } catch (error) {
             console.error('Błąd podczas pobierania danych:', error);
             return null;
         }
     }
 
-    // Funkcja renderująca dane zawodników do tabeli w zaawansowany sposób
     function renderPlayerData(players, tableBody) {
-        players.slice(1).forEach((player, index) => { // Pomijamy nagłówek
+        players.slice(1).forEach((player, index) => {
             const row = document.createElement('tr');
             const avatarUrl = getPlayerAvatar(player[2]);
             row.innerHTML = `
@@ -96,33 +91,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 </td>
             `;
+
+            const detailsRow = document.createElement('tr');
+            detailsRow.classList.add('details-row');
+            detailsRow.style.display = 'none';
+            detailsRow.innerHTML = `
+                <td colspan="6">
+                    <div class="match-results">${generateRandomMatchResults()}</div>
+                </td>
+            `;
+
+            row.addEventListener('click', () => {
+                detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+            });
+
             tableBody.appendChild(row);
+            tableBody.appendChild(detailsRow);
         });
     }
 
-    // Funkcja zwracająca kolor zmiany pozycji
     function getPositionChangeColor(change) {
-        if (change.startsWith('+')) {
-            return 'green';
-        } else if (change.startsWith('-')) {
-            return 'red';
-        } else {
-            return 'gray';
-        }
+        return change.startsWith('+') ? 'green' : change.startsWith('-') ? 'red' : 'gray';
     }
 
-    // Funkcja zwracająca symbol zmiany pozycji
     function getPositionChangeSymbol(change) {
-        if (change.startsWith('+')) {
-            return '↑';
-        } else if (change.startsWith('-')) {
-            return '↓';
-        } else {
-            return '↔';
-        }
+        return change.startsWith('+') ? '↑' : change.startsWith('-') ? '↓' : '↔';
     }
 
-    // Funkcja zwracająca avatar zawodnika na podstawie jego imienia
     function getPlayerAvatar(playerName) {
         switch (playerName) {
             case 'Mariusz':
@@ -134,14 +129,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'Patryk':
                 return avatars[3];
             default:
-                return 'https://via.placeholder.com/32'; // Domyślny avatar, jeśli nie znaleziono
+                return 'https://via.placeholder.com/32';
         }
     }
 
-    // Pokaż loader na początku
+    function generateRandomMatchResults() {
+        const clubs = [
+           'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 1
+            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 2
+            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny', // Sample logo 3
+            'https://www.thesportsdb.com/images/media/team/badge/zsva1p1626103599.png/tiny'  // Sample logo 4
+        ];
+        let results = '<div class="match-grid">';
+        for (let i = 0; i < 18; i++) {
+            const club1 = clubs[Math.floor(Math.random() * clubs.length)];
+            const club2 = clubs[Math.floor(Math.random() * clubs.length)];
+            const score1 = Math.floor(Math.random() * 5);
+            const score2 = Math.floor(Math.random() * 5);
+            results += `
+                <div class="match-result">
+                    <img src="${club1}" alt="Logo 1" class="club-logo">
+                    <span>${score1}:${score2}</span>
+                    <img src="${club2}" alt="Logo 2" class="club-logo">
+                </div>
+            `;
+        }
+        results += '</div>';
+        return results;
+    }
+
     showLoader();
 
-    // Pobieranie i renderowanie danych dla obu tabel
     const firstTableData = await fetchFirstTableData();
     if (firstTableData) {
         renderPlayerData(firstTableData, firstTableBody);
@@ -152,6 +170,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPlayerData(secondTableData, secondTableBody);
     }
 
-    // Ukryj loader po załadowaniu danych
     hideLoader();
 });
