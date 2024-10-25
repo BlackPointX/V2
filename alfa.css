@@ -164,7 +164,30 @@ main {
     margin-bottom: 5px;
 }
 
+.team-home {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.team-away {
+    display: flex;
+    align-items: center;
+}
+
 .team img {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.team-home img {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.team-away img {
     width: 16px;
     height: 16px;
     margin-right: 5px;
@@ -172,6 +195,10 @@ main {
 
 .team-name {
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust max-width as needed */
 }
 
 .score {
@@ -184,9 +211,6 @@ main {
     margin-right: 2px;
 }
 
-.score span {
-    margin-bottom: 5px;
-}
 
 .score-player {
     display: flex;
@@ -198,9 +222,6 @@ main {
     margin-right: 5px;
 }
 
-.score-player span {
-    margin-bottom: 5px;
-}
 
 
 
@@ -263,6 +284,7 @@ footer {
     padding-left: 10px;
     display: flex;
     padding-top: 10px;
+    padding-bottom: 5px;
 }
 
 .league-table th, .league-table td {
@@ -360,7 +382,7 @@ footer {
 .match-info {
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 5px 10px 5px 10px;
 }
 
 /* Sekcja po lewej stronie (liga, czas, status) */
@@ -426,9 +448,6 @@ footer {
     margin-right: 5px;
 }
 
-.team-name {
-    font-size: 14px;
-}
 
 
 .symbol img {
@@ -580,5 +599,28 @@ footer {
 
 .soccer-ball-spinner {
     height: 50px;
+}
+
+
+.winner-circle {
+    display: inline-block;
+    font-weight: bold;
+    position: relative; /* Ensures that pseudo-element can be positioned absolutely within this context */
+    margin-bottom: 0px;
+}
+
+.winner-circle::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5em; /* Adjust circle size as needed */
+    height: 1.5em;
+    border: 2px solid #FFD700; /* Gold border for the winner */
+    border-radius: 50%;
+    background-color: transparent;
+    z-index: 2; /* Place it above other elements */
+    pointer-events: none; /* Ensures it doesn't interfere with clicks or other interactions */
 }
 
