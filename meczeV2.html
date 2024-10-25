@@ -1,61 +1,207 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Mecze - SofaScore</title>
-    <link rel="stylesheet" href="alfa.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="meczeV2.js" defer></script>
-</head>
-<body>
-    <header>
-        <div class="header-left">
-            <a href="mecze.html">
-                <img src="./logo.png" alt="Logo SofaScore">
-            </a>
-        </div>
-        <div class="header-right">
-            <a href="tabela.html" style="color: #ffffff; text-decoration: none;">Tabela</a>
-            <img src="https://img.icons8.com/material-rounded/24/ffffff/search.png" alt="Szukaj">
-            <img src="https://img.icons8.com/material-rounded/24/ffffff/settings.png" alt="Ustawienia">
-        </div>
-    </header>
-    <nav>
-        <ul>
-            <li class="active"><a href="mecze.html">Wszystkie</a></li>
-            <li><a href="mecze.html">Na Żywo</a></li>
-            <li><a href="mecze.html">Moje Mecze</a></li>
-        </ul>
-    </nav>
-    <main>
-        <!-- Kontener przewijalny dla meczów -->
-        <div id="matches-container">
-            <!-- JavaScript wstawi tutaj daty i mecze -->
-        </div>
-    </main>
-    <footer>
-        <div class="footer-nav">
-            <div class="nav-item active">
-                <a href="mecze.html">
-                    <img src="https://img.icons8.com/material-rounded/24/ffffff/home.png" alt="Strona Główna">
-                    <span>Strona Główna</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a href="tabela.html">
-                    <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
-                    <span>Tabela</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <img src="https://img.icons8.com/material-rounded/24/ffffff/star.png" alt="Ulubione">
-                <span>Ulubione</span>
-            </div>
-            <div class="nav-item">
-                <img src="https://img.icons8.com/material-rounded/24/ffffff/user.png" alt="Profil">
-                <span>Profil</span>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('matches-container')) {
+        const matchesContainer = document.getElementById('matches-container');
+
+        async function fetchMatchData() {
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbxPKj0TKn1XMYUdf6C7JNZWrqgl6T8sT4LON9bq0lcDHDHuFda3yPd20PgDkfakvCumEg/exec?page=Komplet');
+                const data = await response.json();
+                logFetchedData(data.Komplet.slice(1));
+                return data.Komplet.slice(1);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return [];
+            }
+        }
+
+        function logFetchedData(fetchedData) {
+            console.log('Fetched data from API:', fetchedData);
+        }
+
+        function formatPlayerResult(result) {
+            const [scores, suffix] = result.split('/');
+            let homePlayerScore = "0", awayPlayerScore = "0", homePlayerClass = "", awayPlayerClass = "", color = "black";
+        
+            if (scores) {
+                const scoreMatch = scores.match(/^(\d+):(\d+)(?:\s?\((\d+)\))?$/);
+        
+                if (scoreMatch) {
+                    const [_, mainHomeScore, mainAwayScore, extraInfo] = scoreMatch;
+                    homePlayerScore = mainHomeScore;
+                    awayPlayerScore = mainAwayScore;
+        
+                    if (extraInfo === "1") {
+                        homePlayerClass = "winner-circle";
+                    } else if (extraInfo === "2") {
+                        awayPlayerClass = "winner-circle";
+                    }
+                } else {
+                    [homePlayerScore, awayPlayerScore] = scores.split(':');
+                }
+            }
+        
+            switch (suffix) {
+                case 'y': color = 'yellow'; break;
+                case 'r': color = 'red'; break;
+                case 'g': color = 'green'; break;
+                case 'yg': color = '#87CEEB'; break;
+                default: color = 'black'; break;
+            }
+        
+            return {
+                homePlayer: `<span class="${homePlayerClass}" style="color:${color}">${homePlayerScore}</span>`,
+                awayPlayer: `<span class="${awayPlayerClass}" style="color:${color}">${awayPlayerScore}</span>`
+            };
+        }
+
+        function getTeamColors(homeScore, awayScore, homeScoreClass, awayScoreClass) {
+            if (homeScoreClass === "winner-circle") {
+                return { homeColor: '#ffffff', awayColor: 'rgba(255, 255, 255, 0.5)' };
+            } else if (awayScoreClass === "winner-circle") {
+                return { homeColor: 'rgba(255, 255, 255, 0.5)', awayColor: '#ffffff' };
+            } else if (parseInt(homeScore) > parseInt(awayScore)) {
+                return { homeColor: '#ffffff', awayColor: 'rgba(255, 255, 255, 0.5)' };
+            } else if (parseInt(awayScore) > parseInt(homeScore)) {
+                return { homeColor: 'rgba(255, 255, 255, 0.5)', awayColor: '#ffffff' };
+            } else {
+                return { homeColor: 'rgba(255, 255, 255, 0.5)', awayColor: 'rgba(255, 255, 255, 0.5)' };
+            }
+        }
+
+        function generateMatches(apiData) {
+            return apiData.map(match => {
+                const player1 = formatPlayerResult(match[6]);
+                const player2 = formatPlayerResult(match[7]);
+                const player3 = formatPlayerResult(match[8]);
+                const player4 = formatPlayerResult(match[9]);
+
+                let matchScore = match[2];
+                let homeScore = "0", awayScore = "0", homeScoreClass = "", awayScoreClass = "";
+
+                const scoreMatch = matchScore.match(/^(\d+):(\d+)(?:\s?\((\d+)\))?$/);
+                
+                if (scoreMatch) {
+                    const [_, mainHomeScore, mainAwayScore, extraInfo] = scoreMatch;
+                    homeScore = mainHomeScore;
+                    awayScore = mainAwayScore;
+
+                    if (extraInfo === "1") {
+                        homeScoreClass = "winner-circle";
+                    } else if (extraInfo === "2") {
+                        awayScoreClass = "winner-circle";
+                    }
+                } else {
+                    [homeScore, awayScore] = matchScore.split(':');
+                }
+
+                const { homeColor, awayColor } = getTeamColors(homeScore, awayScore, homeScoreClass, awayScoreClass);
+
+                return {
+                    date: match[15],
+                    leagueName: match[17],
+                    leagueLogo: 'https://via.placeholder.com/16',
+                    time: match[15].split(' ')[1],
+                    status: 'FT',
+                    homeTeam: match[1],
+                    awayTeam: match[3],
+                    homeTeamHtml: `<span style="color:${homeColor}">${match[1]}</span>`,
+                    awayTeamHtml: `<span style="color:${awayColor}">${match[3]}</span>`,
+                    homeLogo: match[0],
+                    awayLogo: match[4],
+                    homeScore: `<span class="${homeScoreClass}" style="color:${homeColor}">${homeScore}</span>`,
+                    awayScore: `<span class="${awayScoreClass}" style="color:${awayColor}">${awayScore}</span>`,
+                    playerResults: [player1, player2, player3, player4],
+                    endOfKolejka: match[10] // Dodajemy endOfKolejka do wyniku meczu
+                };
+            });
+        }
+
+        function renderMatches(matches) {
+            let currentKolejka = 1;
+            let matchesForKolejka = document.createElement('div');
+            matchesForKolejka.classList.add('matches-for-kolejka');
+        
+            function createKolejkaSection(kolejkaNumber) {
+                const kolejkaDivider = document.createElement('section');
+                kolejkaDivider.classList.add('date-divider');
+                kolejkaDivider.innerHTML = `
+                    <span>Kolejka ${kolejkaNumber}</span>
+                    <div class="avatars-container">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Mariusz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/%C5%81ukasz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Mateusz.png" alt="Avatar" class="avatar-small">
+                        <img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Patryk.png" alt="Avatar" class="avatar-small">
+                    </div>
+                `;
+                matchesContainer.appendChild(kolejkaDivider);
+        
+                matchesForKolejka = document.createElement('div');
+                matchesForKolejka.classList.add('matches-for-date');
+                matchesContainer.appendChild(matchesForKolejka);
+            }
+        
+            // Tworzymy początkową kolejkę
+            createKolejkaSection(currentKolejka);
+        
+            matches.forEach((match, index) => {
+                const matchElement = document.createElement('section');
+                matchElement.classList.add('match');
+        
+                matchElement.innerHTML = `
+                    <div class="league-info">
+                        <img class="league-logo" src="${match.leagueLogo}" alt="Logo ${match.homeTeam}">
+                        <span class="league-name">${match.leagueName}</span>
+                    </div>
+        
+                    <div class="match-info">
+                        <div class="left-section">
+                            <div class="match-time-status">
+                                <span class="match-status">${match.status}</span>
+                            </div>
+                        </div>
+                        <div class="vertical-separator"></div>
+                        <div class="teams">
+                            <div class="team-home">
+                                <img src="${match.homeLogo}" alt="Logo ${match.homeTeam}">
+                                <span class="team-name">${match.homeTeamHtml}</span>
+                            </div>
+                            <div class="team-away">
+                                <img src="${match.awayLogo}" alt="Logo ${match.awayTeam}">
+                                <span class="team-name">${match.awayTeamHtml}</span>
+                            </div>
+                        </div>
+                        <div class="score">
+                            <span class="score-home" style="margin-bottom: 5px;">${match.homeScore}</span>
+                            <span class="score-away" style="margin-bottom: 0px;">${match.awayScore}</span>
+                        </div>
+                        <div class="vertical-separator"></div>
+                        
+                        ${match.playerResults.map((playerResult, i) => `
+                            <div class="score-player">
+                                <span class="score-home" style="margin-bottom: 5px;">${playerResult.homePlayer}</span>
+                                <span class="score-away" style="margin-bottom: 0px;">${playerResult.awayPlayer}</span>
+                            </div>
+                            ${i < match.playerResults.length - 1 ? '<div class="vertical-separator-result"></div>' : ''}
+                        `).join('')}
+                    </div>
+                `;
+        
+                matchesForKolejka.appendChild(matchElement);
+        
+                if (match.endOfKolejka) {
+                    currentKolejka++;
+                    createKolejkaSection(currentKolejka);
+                }
+            });
+        }
+        
+
+        async function init() {
+            const apiData = await fetchMatchData();
+            const matches = generateMatches(apiData);
+            renderMatches(matches);
+        }
+
+        init();
+    }
+});
