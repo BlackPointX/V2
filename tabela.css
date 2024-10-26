@@ -41,12 +41,22 @@ html, body {
     margin: 0;
     display: flex;
     flex-direction: column;
+    background-image: url('https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/bck2.png');
 }
 
 body {
     background-color: #2C3E50; /* Nieco jaśniejsze tło z niebiesko-szarym odcieniem */
     color: #ffffff;
     font-family: 'SofascoreSans', sans-serif;
+}
+
+.bet-name {
+        text-align:center;
+        background-color: #002766;
+        color: #FFFFFF;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-radius: 8px 8px 0 0;
 }
 
 main {
@@ -276,12 +286,14 @@ footer {
     background-color: #1A252F;
     border-radius: 8px;
     overflow: visible;
+    opacity: 0.9;
 }
 
 .league-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
+    border-radius: 10px;
 }
 
 .league-info {
@@ -310,6 +322,52 @@ footer {
 
 .league-table td img {
     vertical-align: middle;
+}
+
+/* Stylizacja tabeli .league-table-bet */
+.league-table-bet {
+    background-color: #cc6d00; /* Ciemniejszy kolor tła dla tabeli bet */
+    color: #FAFAFA;
+}
+
+.league-table-bet th {
+    background-color: #2E4055; /* Unikalny kolor nagłówków dla bet */
+    color: #FFFFFF;
+}
+
+.league-table.league-table-bet th {
+    background-color: #834600; /* Nowy kolor dla nagłówka drugiej tabeli */
+    color: #FFFFFF; /* Kolor tekstu */
+}
+
+.league-table-bet tbody tr:hover {
+    background-color: #3A4B63; /* Kolor podświetlenia dla bet */
+}
+
+/* Stylizacja tabeli .league-table-lm */
+.league-table-lm {
+    background-color: #0044cc; /* Kolor tła dla tabeli lm */
+    color: #FAFAFA;
+}
+
+.league-table.league-table-lm th {
+    background-color: #002766; /* Nowy kolor dla nagłówka drugiej tabeli */
+    color: #FFFFFF; /* Kolor tekstu */
+}
+
+
+.league-table-lm th {
+    background-color: #ff006a; /* Unikalny kolor nagłówków dla lm */
+    color: #FFFFFF;
+}
+
+.league-table-lm tbody tr:hover {
+    background-color: #3E5573; /* Kolor podświetlenia dla lm */
+}
+
+
+.details-row {
+    background-color: rgba(0, 39, 102, 0.8);
 }
 
 /* Dotychczasowe style pozostają bez zmian */
@@ -493,7 +551,7 @@ footer {
 
 /* Dostosowanie szerokości kolumn */
 .league-table th:nth-child(1), .league-table td:nth-child(1) {
-    width: 10%;
+    width: 15%;
     text-align: center;
 }
 
@@ -503,13 +561,17 @@ footer {
 }
 
 .league-table th:nth-child(3), .league-table td:nth-child(3),
-.league-table th:nth-child(4), .league-table td:nth-child(4),
+.league-table th:nth-child(4), .league-table td:nth-child(4) {
+    width: 10%;
+    color: rgb(188, 188, 188);
+}
+
 .league-table th:nth-child(5), .league-table td:nth-child(5) {
     width: 10%;
 }
 
 .league-table th:nth-child(6), .league-table td:nth-child(6) {
-    width: 20%;
+    width: 15%;
 }
 
 .league-table th:nth-child(7), .league-table td:nth-child(7) {
@@ -593,11 +655,12 @@ footer {
 
 .points-change {
     font-size: 10px;
+    color: greenyellow;
 }
 
 @media screen and (max-width: 600px) {
     .league-table th, .league-table td {
-        padding: 8px;
+        padding: 8px 6px;
     }
 }
 
@@ -663,4 +726,55 @@ footer {
     object-fit: cover;
     border-radius: 0%;
     padding: 0 5px 0 5px;
+}
+
+@keyframes blink-yellow {
+    0% {
+        border-color: transparent;
+    }
+    50% {
+        border-color: yellow;
+    }
+    100% {
+        border-color: transparent;
+    }
+}
+
+@keyframes blink-green {
+    0% {
+        border-color: transparent;
+    }
+    50% {
+        border-color: green;
+    }
+    100% {
+        border-color: transparent;
+    }
+}
+
+@keyframes blink-red {
+    0% {
+        border-color: transparent;
+    }
+    50% {
+        border-color: red;
+    }
+    100% {
+        border-color: transparent;
+    }
+}
+
+.blinking-border-yellow {
+    border: 4px solid transparent;
+    animation: blink-yellow 1s infinite;
+}
+
+.blinking-border-green {
+    border: 4px solid transparent;
+    animation: blink-green 1s infinite;
+}
+
+.blinking-border-red {
+    border: 4px solid transparent;
+    animation: blink-red 1s infinite;
 }
