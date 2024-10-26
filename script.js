@@ -105,13 +105,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function getPositionChangeColor(change) {
-        return change.startsWith('+') ? 'green' : change.startsWith('-') ? 'red' : 'gray';
+   // Funkcja zwracająca kolor w zależności od wartości zmiany
+function getPositionChangeColor(change) {
+    if (change > 0) {
+        return 'filter: invert(51%) sepia(92%) saturate(355%) hue-rotate(63deg) brightness(94%) contrast(101%);'; // Zielony
+    } else if (change < 0) {
+        return 'filter: invert(19%) sepia(87%) saturate(7498%) hue-rotate(346deg) brightness(100%) contrast(112%);'; // Czerwony
+    } else {
+        return 'filter: invert(63%) sepia(90%) saturate(1509%) hue-rotate(8deg) brightness(100%) contrast(107%);'; // Szary (pomarańczowy)
     }
+}
 
-    function getPositionChangeSymbol(change) {
-        return change.startsWith('+') ? '↑' : change.startsWith('-') ? '↓' : '↔';
+// Funkcja zwracająca symbol z odpowiednią ikoną i stylem koloru
+function getPositionChangeSymbol(change) {
+    const colorStyle = getPositionChangeColor(change); // Pobieranie stylu koloru
+    if (change > 0) {
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/up_icon.svg" alt="Up" style="${colorStyle} vertical-align: middle; width: 50%;">`;
+    } else if (change < 0) {
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/down.svg" alt="Down" style="${colorStyle} vertical-align: middle; width: 50%;">`;
+    } else {
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/equal.svg" alt="Equal" style="${colorStyle} vertical-align: middle; width: 50%;">`;
     }
+}
+
+
+    
 
     function getPlayerAvatar(playerName) {
         switch (playerName) {
@@ -139,6 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             let backgroundColor;
             switch (suffix) {
                 case 'y':
+                    backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Yellow, 80% opacity
+                    break;
+                case 'yl':
                     backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Yellow, 80% opacity
                     break;
                 case 'r':
