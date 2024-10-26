@@ -105,14 +105,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-   // Funkcja zwracająca kolor w zależności od wartości zmiany
+ // Funkcja zwracająca kolor w zależności od wartości zmiany
 function getPositionChangeColor(change) {
-    if (change > 0) {
+    const numericChange = parseInt(change, 10); // Konwersja wartości na liczbę
+    if (numericChange > 0) {
         return 'filter: invert(51%) sepia(92%) saturate(355%) hue-rotate(63deg) brightness(94%) contrast(101%);'; // Zielony
-    } else if (change < 0) {
+    } else if (numericChange < 0) {
         return 'filter: invert(19%) sepia(87%) saturate(7498%) hue-rotate(346deg) brightness(100%) contrast(112%);'; // Czerwony
     } else {
-        return 'filter: invert(63%) sepia(90%) saturate(1509%) hue-rotate(8deg) brightness(100%) contrast(107%);'; // Szary (pomarańczowy)
+        return 'filter: invert(63%) sepia(90%) saturate(1509%) hue-rotate(8deg) brightness(100%) contrast(107%);'; // Szary
     }
 }
 
@@ -120,13 +121,14 @@ function getPositionChangeColor(change) {
 function getPositionChangeSymbol(change) {
     const colorStyle = getPositionChangeColor(change); // Pobieranie stylu koloru
     if (change > 0) {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/up_icon.svg" alt="Up" style="${colorStyle} vertical-align: middle; width: 50%;">`;
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/up_icon.svg" alt="Up" style="${colorStyle} vertical-align: middle; width: 25px;">`;
     } else if (change < 0) {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/down.svg" alt="Down" style="${colorStyle} vertical-align: middle; width: 50%;">`;
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/down.svg" alt="Down" style="${colorStyle} vertical-align: middle; width: 25px;">`;
     } else {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/equal.svg" alt="Equal" style="${colorStyle} vertical-align: middle; width: 50%;">`;
+        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/equal.svg" alt="Equal" style="${colorStyle} vertical-align: middle; width: 20px;">`;
     }
 }
+
 
 
     
@@ -150,30 +152,38 @@ function getPositionChangeSymbol(change) {
         let results = '<div class="match-grid">';
         matches.forEach(match => {
             const playerScoreData = match[playerIndex];
-            const playerScore = playerScoreData.split('/')[0]; // Extract score before suffix
-            const suffix = playerScoreData.split('/')[1]; // Extract suffix for color
-
-            // Determine background color based on suffix
+            const playerScore = playerScoreData.split('/')[0]; // Wyciąganie wyniku przed sufiksem
+            const suffix = playerScoreData.split('/')[1]; // Wyciąganie sufiksu dla koloru
+    
+            // Określenie koloru tła na podstawie sufiksu
             let backgroundColor;
+            let borderClass = ''; // Domyślnie brak klasy ramki
+    
             switch (suffix) {
                 case 'y':
-                    backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Yellow, 80% opacity
+                    backgroundColor = '#a79907'; // Żółty, 80% przejrzystości
                     break;
                 case 'yl':
-                    backgroundColor = 'rgba(255, 255, 0, 0.8)'; // Yellow, 80% opacity
+                    borderClass = 'blinking-border-yellow'; // Żółta mrugająca ramka
                     break;
                 case 'r':
-                    backgroundColor = 'rgba(255, 0, 0, 0.8)'; // Red, 80% opacity
+                    backgroundColor = '#a10808'; // Czerwony, 80% przejrzystości
+                    break;
+                case 'rl':
+                    borderClass = 'blinking-border-red'; // Czerwona mrugająca ramka
                     break;
                 case 'g':
-                    backgroundColor = 'rgba(0, 255, 0, 0.8)'; // Green, 80% opacity
+                    backgroundColor = '#057c05'; // Zielony, 80% przejrzystości
+                    break;
+                case 'gl':
+                    borderClass = 'blinking-border-green'; // Zielona mrugająca ramka
                     break;
                 default:
-                    backgroundColor = 'rgba(200, 200, 200, 0.8)'; // Default gray, 80% opacity
+                    backgroundColor = 'rgba(200, 200, 200, 0.8)'; // Domyślny szary, 80% przejrzystości
             }
-
+    
             results += `
-                <div class="match-result" style="background-color: ${backgroundColor};">
+                <div class="match-result ${borderClass}" style="background-color: ${backgroundColor};">
                     <img src="${match[4]}" alt="Logo 1" class="club-logo">
                     <span>${playerScore}</span>
                     <img src="${match[5]}" alt="Logo 2" class="club-logo">
@@ -183,6 +193,8 @@ function getPositionChangeSymbol(change) {
         results += '</div>';
         return results;
     }
+    
+    
 
     showLoader();
 
