@@ -198,7 +198,7 @@ main {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 130px; /* Adjust max-width as needed */
+    max-width: 110px; /* Adjust max-width as needed */
 }
 
 .score {
@@ -635,4 +635,10 @@ footer {
 
 .avatar-small {
     width: 20px;
+}
+
+@media (min-width: 420px) {
+    .team-name {
+        max-width: 170px; /* Zwiększona maksymalna szerokość */
+    }
 }
