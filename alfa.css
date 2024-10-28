@@ -806,9 +806,3 @@ footer {
     border-top: 4px solid #3498DB;
     color: #fff;
 }
-
-/* Efekt hover dla przycisków */
-#switch-container button:hover {
-    background-color: #666; /* Kolor przycisku podczas najechania */
-    transform: scale(1.05); /* Powiększenie przycisku podczas najechania */
-}
