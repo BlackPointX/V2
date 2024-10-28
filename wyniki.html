@@ -2,16 +2,16 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>MŁMP BetLiga - Formularze</title>
+    <title>MŁMP BetLiga - Wyniki BetLiga</title>
     <link rel="stylesheet" href="alfa.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="form.js" defer></script>
+    <script src="wyniki.js" defer></script>
 </head>
 <body>
    <header>
         <div class="header-left">
-            <a href="wyniki.html">
-                <img src="logo.png" alt="Logo MŁMP BetLiga">
+            <a href="mecze.html">
+                <img src="logo.png" alt="Logo SofaScore">
             </a>
         </div>
         <div class="header-right">
@@ -21,21 +21,26 @@
     </header>
     <nav class="top-nav">
         <a href="tabela.html" class="top-nav-item">
-            <img src="./Icons/Stadium.svg" alt="Tabele" class="top-nav-icon">
+            <img src="./Icons/Stadium.svg" alt="Football" class="top-nav-icon">
             <span>Tabele</span>
         </a>
-        <a href="wyniki.html" class="top-nav-item">
-            <img src="./Icons/wyniki.svg" alt="Wyniki" class="top-nav-icon">
+        <a href="wyniki.html" class="top-nav-item active">
+            <img src="./Icons/wyniki.svg" alt="Basketball" class="top-nav-icon-active">
             <span>Wyniki</span>
         </a>
-        <a href="form.html" class="top-nav-item active">
-            <img src="./Icons/formularze.svg" alt="Formularze" class="top-nav-icon-active">
+        <a href="form.html" class="top-nav-item">
+            <img src="./Icons/formularze.svg" alt="Tennis" class="top-nav-icon">
             <span>Obstawianie</span>
         </a>
     </nav>
     <main>
+        <div id="switch-container">
+            <button id="switch-betLiga" class="active">BetLiga</button>
+            <button id="switch-ligaMistrzow">Liga Mistrzów</button>
+        </div>
         <!-- Kontener przewijalny dla meczów -->
         <div id="matches-container">
+                <div class="switch-overlay"></div>
             <!-- JavaScript wstawi tutaj daty i mecze -->
         </div>
     </main>
@@ -47,13 +52,13 @@
                     <span>Tabele</span>
                 </a>
             </div>
-            <div class="nav-item">
+            <div class="nav-item active">
                 <a href="wyniki.html">
                     <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
                     <span>Wyniki</span>
                 </a>
             </div>
-            <div class="nav-item active">
+            <div class="nav-item">
                 <a href="form.html">
                 <img src="https://img.icons8.com/material-rounded/24/ffffff/star.png" alt="Ulubione">
                 <span>Formularz</span>
@@ -61,7 +66,7 @@
             </div>
             <div class="nav-item">
                 <img src="https://img.icons8.com/material-rounded/24/ffffff/user.png" alt="Profil">
-                <span>Profil</span>
+                <span>Zapas</span>
             </div>
         </div>
     </footer>

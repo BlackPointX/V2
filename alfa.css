@@ -393,14 +393,6 @@ footer {
 }
 
 
-/* Dostosowanie kontenera meczów */
-#matches-container {
-    flex: 1;
-    overflow-y: auto;
-}
-/* Dotychczasowe style pozostają bez zmian */
-
-/* Upewnij się, że poniższe style są zawarte w pliku alfa.css */
 
 /* Kontener meczów */
 #matches-container {
@@ -699,4 +691,124 @@ footer {
     .team-name {
         max-width: 170px; /* Zwiększona maksymalna szerokość */
     }
+}
+
+
+/* Container for avatars */
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Individual player container */
+.player-element {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #1A252F;
+    border-radius: 8px;
+}
+
+/* Avatar styling */
+.avatar-small-form {
+    width: 50px;
+    height: 50px;
+}
+
+/* Container for the links and statuses */
+.links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Row container for each link and status */
+.row {
+    display: flex;
+    align-items: center;
+}
+
+/* Link styling */
+.link {
+    color: #3498DB;
+    text-decoration: none;
+}
+
+/* Status indicators */
+.status-green {
+    color: green;
+    margin-left: 10px;
+}
+
+.status-red {
+    color: red;
+    margin-left: 10px;
+}
+
+
+/* Element overlay powinien być widoczny na całym kontenerze */
+.switch-overlay {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 10;
+    transform: translateX(0);
+    transition: transform 0.5s ease;
+}
+
+/* Dodanie klasy active przesuwa overlay do lewej */
+.switch-overlay.active {
+    transform: translateX(-100%);
+}
+
+/* Efekt rozmycia */
+#matches-container.blur {
+    filter: blur(8px);
+    transition: filter 0.3s ease;
+}
+
+/* Efekt wyostrzania */
+#matches-container.fade-in {
+    opacity: 1;
+    filter: blur(0);
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+
+/* Stylizacja kontenera przycisków */
+#switch-container {
+    display: flex;
+    justify-content: center;
+    background-color: #545e6b;
+}
+
+/* Stylizacja przycisków */
+#switch-container button {
+    width: 50%;
+    color: rgb(188, 188, 188);
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #545e6b;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Styl aktywnego przycisku */
+#switch-container button.active {
+    border-top: 4px solid #3498DB;
+    color: #fff;
+}
+
+/* Efekt hover dla przycisków */
+#switch-container button:hover {
+    background-color: #666; /* Kolor przycisku podczas najechania */
+    transform: scale(1.05); /* Powiększenie przycisku podczas najechania */
 }
