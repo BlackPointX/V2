@@ -41,7 +41,6 @@ html, body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    background-image: url('https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/bck2.png');
 }
 
 body {
@@ -70,12 +69,12 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #34495E; /* Ciemniejsze tło dla nagłówka */
+    background-color: #2a3543; /* Ciemniejsze tło dla nagłówka */
     padding: 10px 15px;
 }
 
 .header-left img {
-    height: 24px;
+    height: 35px;
 }
 
 .header-right img {
@@ -83,29 +82,48 @@ header {
     margin-left: 20px;
 }
 
-nav {
-    background-color: #34495E; /* Ciemniejsze tło dla nawigacji */
-    border-bottom: 1px solid #2C3E50;
-}
-
-nav ul {
+.top-nav {
     display: flex;
-    margin: 0;
+    justify-content: space-between;;
+    align-items: center;
+    background-color: #545e6b; /* Darker background similar to Sofascore */
     padding: 0;
-    list-style: none;
+    font-weight: bold;
 }
 
-nav li {
-    flex: 1;
-    text-align: center;
-    padding: 10px 0;
-    color: #BDC3C7;
-    font-size: 14px;
+.top-nav-icon {
+    width: 30px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    filter: invert(37%) brightness(1.5);
 }
 
-nav li.active {
-    color: #fff;
-    border-bottom: 2px solid #3498DB;
+.top-nav-icon-active {
+    width: 30px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    filter: brightness(0) invert(1);
+}
+
+
+.top-nav a {
+    flex: 1; /* Make each link take equal space */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(188, 188, 188);
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.top-nav a.active {
+    color: #ffffff;
+    border-bottom: 4px solid #3498DB;
+
+}
+
+.top-nav a:hover {
+    color: #ffffff;
 }
 
 
@@ -245,13 +263,16 @@ footer {
     background-color: #34495E;
     position: relative; /* Ensure footer does not overlap content */
     width: 100%;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .footer-nav {
     display: flex;
-    justify-content: space-around;
-    padding: 5px 0;
+    justify-content: space-between;;
+    align-items: center;
+    background-color: #545e6b; /* Darker background similar to Sofascore */
+    padding: 0 5px 0 5px;
+    font-weight: bold;
 }
 
 .nav-item {
@@ -270,8 +291,20 @@ footer {
 }
 
 .nav-item.active {
-    color: #fff;
+    color: #ffffff;
+    border-bottom: 4px solid #3498DB;
 }
+
+.footer-nav a {
+    color: rgb(188, 188, 188);
+    text-decoration: none;
+}
+
+.nav-item.active a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
 
 @media screen and (min-width: 768px) {
     .matches-container {
@@ -312,7 +345,6 @@ footer {
 .league-table th {
     background-color: #34495E;
     color: #ffffff;
-    position: sticky;
     top: 0;
 }
 
@@ -326,17 +358,17 @@ footer {
 
 /* Stylizacja tabeli .league-table-bet */
 .league-table-bet {
-    background-color: #cc6d00; /* Ciemniejszy kolor tła dla tabeli bet */
+    background-color: #1A252F; /* Ciemniejszy kolor tła dla tabeli bet */
     color: #FAFAFA;
 }
 
 .league-table-bet th {
-    background-color: #2E4055; /* Unikalny kolor nagłówków dla bet */
+    background-color: #171E24; /* Unikalny kolor nagłówków dla bet */
     color: #FFFFFF;
 }
 
 .league-table.league-table-bet th {
-    background-color: #834600; /* Nowy kolor dla nagłówka drugiej tabeli */
+    background-color: #171E24; /* Nowy kolor dla nagłówka drugiej tabeli */
     color: #FFFFFF; /* Kolor tekstu */
 }
 
@@ -664,9 +696,27 @@ footer {
     }
 }
 
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .soccer-ball-spinner {
     height: 50px;
+    animation: spin 2s linear infinite; /* Spins in 2 seconds, loops infinitely */
 }
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensures it sits above other content */
+}
+
 
 
 .winner-circle {

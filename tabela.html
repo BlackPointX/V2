@@ -16,25 +16,33 @@
             </a>
         </div>
         <div class="header-right">
-            <a href="mecze.html" style="color: #ffffff; text-decoration: none;">Mecze</a>
             <img src="https://img.icons8.com/material-rounded/24/ffffff/search.png" alt="Szukaj">
             <img src="https://img.icons8.com/material-rounded/24/ffffff/settings.png" alt="Ustawienia">
         </div>
     </header>
-    <nav>
-        <ul>
-            <li><a href="mecze.html">Wszystkie</a></li>
-            <li><a href="mecze.html">Na Żywo</a></li>
-            <li><a href="mecze.html">Moje Mecze</a></li>
-            <li class="active"><a href="tabela.html">Tabela</a></li>
-        </ul>
+    
+    <nav class="top-nav">
+        <a href="tabela.html" class="top-nav-item active">
+            <img src="./Icons/Stadium.svg" alt="Football" class="top-nav-icon-active">
+            <span>Tabele</span>
+        </a>
+        <a href="mecze.html" class="top-nav-item">
+            <img src="./Icons/wyniki.svg" alt="Basketball" class="top-nav-icon">
+            <span>Wyniki</span>
+        </a>
+        <a href="form.html" class="top-nav-item">
+            <img src="./Icons/formularze.svg" alt="Tennis" class="top-nav-icon">
+            <span>Obstawianie</span>
+        </a>
     </nav>
+
+
     <main style="overflow-y: auto;">
         <section class="table-container">
             <table class="league-table league-table-bet">
                 <thead>
                     <tr>
-                        <div class="bet-name" style="background-color: #834600;">MŁMP BetLiga</div>
+                        <div class="bet-name" style="background-color:#171E24;">MŁMP BetLiga</div>
                         <th>#</th>
                         <th>Imię</th>
                         <th>Obst.</th>
@@ -69,31 +77,33 @@
         
         <div id="loading-spinner" class="loading-spinner">
             <!-- Loader do wyświetlania w trakcie ładowania danych -->
-            <img src="https://img.freepik.com/premium-psd/realistic-soccer-ball-png_679658-11799.jpg" alt="Loading" class="soccer-ball-spinner">
+            <img src="https://www.svgrepo.com/show/135042/soccer-ball.svg" alt="Loading" class="soccer-ball-spinner">
             <span>Ładowanie danych...</span>
         </div>
     </main>
     <footer>
         <div class="footer-nav">
-            <div class="nav-item">
-                <a href="mecze.html">
-                    <img src="https://img.icons8.com/material-rounded/24/ffffff/home.png" alt="Strona Główna">
-                    <span>Strona Główna</span>
-                </a>
-            </div>
             <div class="nav-item active">
                 <a href="tabela.html">
-                    <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/home.png" alt="Strona Główna">
                     <span>Tabela</span>
                 </a>
             </div>
             <div class="nav-item">
+                <a href="mecze.html">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
+                    <span>Wyniki</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="form.html">
                 <img src="https://img.icons8.com/material-rounded/24/ffffff/star.png" alt="Ulubione">
-                <span>Ulubione</span>
+                <span>Obstawianie</span>
+                </a>
             </div>
             <div class="nav-item">
                 <img src="https://img.icons8.com/material-rounded/24/ffffff/user.png" alt="Profil">
-                <span>Profil</span>
+                <span>Rezerwa</span>
             </div>
         </div>
     </footer>
