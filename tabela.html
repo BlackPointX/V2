@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>MŁMP BetLiga - Tabele</title>
+    <link rel="stylesheet" href="tabela.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    
+    <header>
+        <div class="header-left">
+            <a href="wyniki.html">
+                <img src="logo.png" alt="Logo SofaScore">
+            </a>
+        </div>
+        <div class="header-right">
+            <img src="https://img.icons8.com/material-rounded/24/ffffff/search.png" alt="Szukaj">
+            <img src="https://img.icons8.com/material-rounded/24/ffffff/settings.png" alt="Ustawienia">
+        </div>
+    </header>
+    
+    <nav class="top-nav">
+        <a href="tabela.html" class="top-nav-item active">
+            <img src="./Icons/Stadium.svg" alt="Football" class="top-nav-icon-active">
+            <span>Tabele</span>
+        </a>
+        <a href="wyniki.html" class="top-nav-item">
+            <img src="./Icons/wyniki.svg" alt="Basketball" class="top-nav-icon">
+            <span>Wyniki</span>
+        </a>
+        <a href="form.html" class="top-nav-item">
+            <img src="./Icons/formularze.svg" alt="Tennis" class="top-nav-icon">
+            <span>Obstawianie</span>
+        </a>
+    </nav>
+
+
+    <main style="overflow-y: auto;">
+        <section class="table-container">
+            <table class="league-table league-table-bet">
+                <thead>
+                    <tr>
+                        <div class="bet-name" style="background-color:#171E24;">MŁMP BetLiga</div>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="first-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        <section class="table-container">
+            <table class="league-table league-table-lm">
+                <thead>
+                    <tr>
+                        <div class="bet-name">MŁMP BetLiga Champions League Edition</div>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="second-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        
+        <div id="loading-spinner" class="loading-spinner">
+            <!-- Loader do wyświetlania w trakcie ładowania danych -->
+            <img src="https://www.svgrepo.com/show/135042/soccer-ball.svg" alt="Loading" class="soccer-ball-spinner">
+            <span>Ładowanie danych...</span>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-nav">
+            <div class="nav-item active">
+                <a href="tabela.html">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/home.png" alt="Strona Główna">
+                    <span>Tabela</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="wyniki.html">
+                    <img src="https://img.icons8.com/material-rounded/24/ffffff/table.png" alt="Tabela">
+                    <span>Wyniki</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="form.html">
+                <img src="https://img.icons8.com/material-rounded/24/ffffff/star.png" alt="Ulubione">
+                <span>Obstawianie</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <img src="https://img.icons8.com/material-rounded/24/ffffff/user.png" alt="Profil">
+                <span>Rezerwa</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
