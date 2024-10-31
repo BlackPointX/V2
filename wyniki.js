@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     if (document.getElementById('matches-container')) {
         const matchesContainer = document.getElementById('matches-container');
         const switchBetLiga = document.getElementById('switch-betLiga');
@@ -17,21 +17,54 @@ document.addEventListener('DOMContentLoaded', () => {
             matchesContainer.appendChild(overlay);
         }
 
-        // Funkcja do pobierania danych z sessionStorage
-        function loadAllData() {
+        // Funkcja pobierająca wszystkie dane z API, jeśli nie są w sessionStorage
+        async function fetchAllData() {
             const cachedData = sessionStorage.getItem('allApiData');
             if (cachedData) {
-                const allData = JSON.parse(cachedData);
-                matchesData.BetLiga = generateMatches(allData.BetLiga);
-                matchesData.LigaMistrzow = generateMatches(allData.LigaMistrzow);
-                return true;
-            } else {
-                console.error("Nie znaleziono danych w cache, upewnij się, że strona główna została załadowana jako pierwsza.");
-                return false;
+                return JSON.parse(cachedData);
+            }
+
+            try {
+                const [firstTableResponse, secondTableResponse, matchesResponse, lmResponse] = await Promise.all([
+                    fetch('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec'),
+                    fetch('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec'),
+                    fetch('https://script.google.com/macros/s/AKfycbxPKj0TKn1XMYUdf6C7JNZWrqgl6T8sT4LON9bq0lcDHDHuFda3yPd20PgDkfakvCumEg/exec?page=Komplet'),
+                    fetch('https://script.google.com/macros/s/AKfycbwJW9UnKuZ3dD-YH2GLfE0Py6vqLR9Z787V8QHatbXdzYtmmkw5NelfKWYbq4X-30xqDw/exec?page=Komplet')
+                ]);
+
+                const [firstTableData, secondTableData, matchesData, lmData] = await Promise.all([
+                    firstTableResponse.json(),
+                    secondTableResponse.json(),
+                    matchesResponse.json(),
+                    lmResponse.json()
+                ]);
+
+                const allData = {
+                    firstTable: { players: firstTableData.WWW, matches: firstTableData.Wyniki.slice(1) },
+                    secondTable: { players: secondTableData.WWW, matches: secondTableData.Wyniki.slice(1) },
+                    BetLiga: matchesData.Komplet.slice(1),
+                    LigaMistrzow: lmData.Komplet.slice(1)
+                };
+
+                sessionStorage.setItem('allApiData', JSON.stringify(allData));
+                return allData;
+            } catch (error) {
+                console.error('Error fetching all data:', error);
+                return null;
             }
         }
 
-        // Formatowanie wyników graczy dla meczu
+        // Funkcja ładująca dane z sessionStorage lub z API
+        async function loadAllData() {
+            const allData = await fetchAllData();
+            if (allData) {
+                matchesData.BetLiga = generateMatches(allData.BetLiga);
+                matchesData.LigaMistrzow = generateMatches(allData.LigaMistrzow);
+                return true;
+            }
+            return false;
+        }
+
         function formatPlayerResult(result) {
             const [scores, suffix] = result.split('/');
             let homePlayerScore = "0", awayPlayerScore = "0", homePlayerClass = "", awayPlayerClass = "", color = "black";
@@ -234,8 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
         switchBetLiga.addEventListener('click', () => handleSwitch('BetLiga'));
         switchLigaMistrzow.addEventListener('click', () => handleSwitch('LigaMistrzow'));
 
-        // Inicjalizacja danych z cache
-        if (loadAllData()) {
+        // Inicjalizacja danych - ładowanie z cache lub z API
+        if (await loadAllData()) {
             renderMatches(matchesData[currentView]);
         }
     }
