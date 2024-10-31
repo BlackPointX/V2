@@ -1,18 +1,53 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const matchesContainer = document.getElementById('matches-container');
 
-    // Funkcja do ładowania wszystkich danych z sessionStorage
-    function loadAllData() {
+    // Funkcja pobierająca wszystkie dane z API, jeśli nie są w sessionStorage
+    async function fetchAllData() {
         const cachedData = sessionStorage.getItem('allApiData');
         if (cachedData) {
             return JSON.parse(cachedData);
-        } else {
-            console.error("Nie znaleziono danych w cache. Upewnij się, że strona główna została załadowana jako pierwsza.");
+        }
+
+        try {
+            const [firstTableResponse, secondTableResponse, matchesResponse, lmResponse] = await Promise.all([
+                fetch('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec'),
+                fetch('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec'),
+                fetch('https://script.google.com/macros/s/AKfycbxPKj0TKn1XMYUdf6C7JNZWrqgl6T8sT4LON9bq0lcDHDHuFda3yPd20PgDkfakvCumEg/exec?page=Komplet'),
+                fetch('https://script.google.com/macros/s/AKfycbwJW9UnKuZ3dD-YH2GLfE0Py6vqLR9Z787V8QHatbXdzYtmmkw5NelfKWYbq4X-30xqDw/exec?page=Komplet')
+            ]);
+
+            const [firstTableData, secondTableData, matchesData, lmData] = await Promise.all([
+                firstTableResponse.json(),
+                secondTableResponse.json(),
+                matchesResponse.json(),
+                lmResponse.json()
+            ]);
+
+            const allData = {
+                firstTable: { players: firstTableData.WWW, matches: firstTableData.Wyniki.slice(1) },
+                secondTable: { players: secondTableData.WWW, matches: secondTableData.Wyniki.slice(1) },
+                BetLiga: matchesData.Komplet.slice(1),
+                LigaMistrzow: lmData.Komplet.slice(1)
+            };
+
+            sessionStorage.setItem('allApiData', JSON.stringify(allData));
+            return allData;
+        } catch (error) {
+            console.error('Error fetching all data:', error);
             return null;
         }
     }
 
-    // Funkcja sprawdzająca, czy wyniki gracza są w porządku
+    // Funkcja ładująca dane z sessionStorage lub z API
+    async function loadAllData() {
+        const allData = await fetchAllData();
+        if (allData) {
+            return allData;
+        }
+        return null;
+    }
+
+    // Funkcja sprawdzająca wyniki gracza
     function checkPlayerResults(results, playerName) {
         const playerIndex = results[0].indexOf(playerName);
         for (let i = 1; i < results.length; i++) {
@@ -23,8 +58,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return true;
     }
 
+    // Funkcja tworząca awatary graczy i ich statusy
     async function createPlayerAvatars() {
-        const allData = loadAllData();
+        const allData = await loadAllData();
         if (!allData) return;
 
         const betLigaResults = allData.firstTable.matches;
