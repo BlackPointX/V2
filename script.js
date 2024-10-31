@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Nie znaleziono elementu firstTableBody. Upewnij się, że element o id "first-table-body" istnieje w HTML.');
         }
         if (!secondTableBody) {
-            console.error('Nie znaleziono elementu secondTableBody. Upewnij się, że element o id "second-table-body" istnieje w HTML.');
-        }
-        if (!loader) {
-            console.error('Nie znaleziono elementu loader. Upewnij się, że element o id "loading-spinner" istnieje w HTML.');
+            console.error('Nie znaleziono elementu secondTableBody. Upewnij się, że element o id "loading-spinner" istnieje w HTML.');
         }
         return;
     }
@@ -23,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         'https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/Patryk.png'
     ];
 
-    // Static mapping of players to their result columns in `Wyniki`
     const playerIndexMapping = {
         'Mariusz': 0,
         'Łukasz': 1,
@@ -39,25 +35,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.style.display = 'none';
     }
 
-    async function fetchTableData(apiUrl) {
+    // Funkcja do pobrania wszystkich danych z API
+    async function fetchAllData() {
+        const cachedData = sessionStorage.getItem('allApiData');
+        if (cachedData) {
+            return JSON.parse(cachedData);
+        }
+
         try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error('Błąd podczas pobierania danych');
-            }
-            const data = await response.json();
-            return { players: data.WWW, matches: data.Wyniki.slice(1) }; // Skip header row in matches
+            const [firstTableResponse, secondTableResponse, matchesResponse, lmResponse] = await Promise.all([
+                fetch('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec'),
+                fetch('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec'),
+                fetch('https://script.google.com/macros/s/AKfycbxPKj0TKn1XMYUdf6C7JNZWrqgl6T8sT4LON9bq0lcDHDHuFda3yPd20PgDkfakvCumEg/exec?page=Komplet'),
+                fetch('https://script.google.com/macros/s/AKfycbwJW9UnKuZ3dD-YH2GLfE0Py6vqLR9Z787V8QHatbXdzYtmmkw5NelfKWYbq4X-30xqDw/exec?page=Komplet')
+            ]);
+
+            const [firstTableData, secondTableData, matchesData, lmData] = await Promise.all([
+                firstTableResponse.json(),
+                secondTableResponse.json(),
+                matchesResponse.json(),
+                lmResponse.json()
+            ]);
+
+            const allData = {
+                firstTable: { players: firstTableData.WWW, matches: firstTableData.Wyniki.slice(1) },
+                secondTable: { players: secondTableData.WWW, matches: secondTableData.Wyniki.slice(1) },
+                BetLiga: matchesData.Komplet.slice(1),
+                LigaMistrzow: lmData.Komplet.slice(1)
+            };
+
+            sessionStorage.setItem('allApiData', JSON.stringify(allData));
+            return allData;
         } catch (error) {
-            console.error('Błąd podczas pobierania danych:', error);
+            console.error('Error fetching all data:', error);
             return null;
         }
     }
 
+    // Funkcja renderująca dane graczy
     function renderPlayerData(players, matches, tableBody) {
         players.slice(1).forEach((player) => {
-            const playerName = player[2]; // Extract player name
-            const playerIndex = playerIndexMapping[playerName]; // Use the static index mapping
-
+            const playerName = player[2];
+            const playerIndex = playerIndexMapping[playerName];
             const row = document.createElement('tr');
             const avatarUrl = getPlayerAvatar(playerName);
             row.innerHTML = `
@@ -105,33 +124,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
- // Funkcja zwracająca kolor w zależności od wartości zmiany
-function getPositionChangeColor(change) {
-    const numericChange = parseInt(change, 10); // Konwersja wartości na liczbę
-    if (numericChange > 0) {
-        return 'filter: invert(51%) sepia(92%) saturate(355%) hue-rotate(63deg) brightness(94%) contrast(101%);'; // Zielony
-    } else if (numericChange < 0) {
-        return 'filter: invert(19%) sepia(87%) saturate(7498%) hue-rotate(346deg) brightness(100%) contrast(112%);'; // Czerwony
-    } else {
-        return 'filter: invert(63%) sepia(90%) saturate(1509%) hue-rotate(8deg) brightness(100%) contrast(107%);'; // Szary
+    function getPositionChangeColor(change) {
+        const numericChange = parseInt(change, 10);
+        if (numericChange > 0) {
+            return 'filter: invert(51%) sepia(92%) saturate(355%) hue-rotate(63deg) brightness(94%) contrast(101%);';
+        } else if (numericChange < 0) {
+            return 'filter: invert(19%) sepia(87%) saturate(7498%) hue-rotate(346deg) brightness(100%) contrast(112%);';
+        } else {
+            return 'filter: invert(63%) sepia(90%) saturate(1509%) hue-rotate(8deg) brightness(100%) contrast(107%);';
+        }
     }
-}
 
-// Funkcja zwracająca symbol z odpowiednią ikoną i stylem koloru
-function getPositionChangeSymbol(change) {
-    const colorStyle = getPositionChangeColor(change); // Pobieranie stylu koloru
-    if (change > 0) {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/up_icon.svg" alt="Up" style="${colorStyle} vertical-align: middle; width: 25px;">`;
-    } else if (change < 0) {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/down.svg" alt="Down" style="${colorStyle} vertical-align: middle; width: 25px;">`;
-    } else {
-        return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/equal.svg" alt="Equal" style="${colorStyle} vertical-align: middle; width: 20px;">`;
+    function getPositionChangeSymbol(change) {
+        const colorStyle = getPositionChangeColor(change);
+        if (change > 0) {
+            return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/up_icon.svg" alt="Up" style="${colorStyle} vertical-align: middle; width: 25px;">`;
+        } else if (change < 0) {
+            return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/down.svg" alt="Down" style="${colorStyle} vertical-align: middle; width: 25px;">`;
+        } else {
+            return `<img src="https://raw.githubusercontent.com/BlackPointX/MLMP-BetLiga/refs/heads/main/images/equal.svg" alt="Equal" style="${colorStyle} vertical-align: middle; width: 20px;">`;
+        }
     }
-}
-
-
-
-    
 
     function getPlayerAvatar(playerName) {
         switch (playerName) {
@@ -152,36 +165,32 @@ function getPositionChangeSymbol(change) {
         let results = '<div class="match-grid">';
         matches.forEach(match => {
             const playerScoreData = match[playerIndex];
-            const playerScore = playerScoreData.split('/')[0]; // Wyciąganie wyniku przed sufiksem
-            const suffix = playerScoreData.split('/')[1]; // Wyciąganie sufiksu dla koloru
-    
-            // Określenie koloru tła na podstawie sufiksu
+            const playerScore = playerScoreData.split('/')[0];
+            const suffix = playerScoreData.split('/')[1];
             let backgroundColor;
-            let borderClass = ''; // Domyślnie brak klasy ramki
-    
+            let borderClass = '';
             switch (suffix) {
                 case 'y':
-                    backgroundColor = '#a79907'; // Żółty, 80% przejrzystości
+                    backgroundColor = '#a79907';
                     break;
                 case 'yl':
-                    borderClass = 'blinking-border-yellow'; // Żółta mrugająca ramka
+                    borderClass = 'blinking-border-yellow';
                     break;
                 case 'r':
-                    backgroundColor = '#a10808'; // Czerwony, 80% przejrzystości
+                    backgroundColor = '#a10808';
                     break;
                 case 'rl':
-                    borderClass = 'blinking-border-red'; // Czerwona mrugająca ramka
+                    borderClass = 'blinking-border-red';
                     break;
                 case 'g':
-                    backgroundColor = '#057c05'; // Zielony, 80% przejrzystości
+                    backgroundColor = '#057c05';
                     break;
                 case 'gl':
-                    borderClass = 'blinking-border-green'; // Zielona mrugająca ramka
+                    borderClass = 'blinking-border-green';
                     break;
                 default:
-                    backgroundColor = 'rgba(200, 200, 200, 0.8)'; // Domyślny szary, 80% przejrzystości
+                    backgroundColor = 'rgba(200, 200, 200, 0.8)';
             }
-    
             results += `
                 <div class="match-result ${borderClass}" style="background-color: ${backgroundColor};">
                     <img src="${match[4]}" alt="Logo 1" class="club-logo">
@@ -193,19 +202,13 @@ function getPositionChangeSymbol(change) {
         results += '</div>';
         return results;
     }
-    
-    
 
     showLoader();
 
-    const firstTableData = await fetchTableData('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec');
-    if (firstTableData) {
-        renderPlayerData(firstTableData.players, firstTableData.matches, firstTableBody);
-    }
-
-    const secondTableData = await fetchTableData('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec');
-    if (secondTableData) {
-        renderPlayerData(secondTableData.players, secondTableData.matches, secondTableBody);
+    const allData = await fetchAllData();
+    if (allData) {
+        renderPlayerData(allData.firstTable.players, allData.firstTable.matches, firstTableBody);
+        renderPlayerData(allData.secondTable.players, allData.secondTable.matches, secondTableBody);
     }
 
     hideLoader();
