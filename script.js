@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.style.display = 'none';
     }
 
-    // Funkcja do pobrania wszystkich danych z API
+    // Funkcja pobierająca wszystkie dane z API, jeśli nie są jeszcze w sessionStorage
     async function fetchAllData() {
         const cachedData = sessionStorage.getItem('allApiData');
         if (cachedData) {
@@ -72,7 +72,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Funkcja renderująca dane graczy
+    // Funkcja ładująca dane z sessionStorage lub z API
+    async function loadAllData() {
+        const allData = await fetchAllData();
+        if (allData) {
+            return allData;
+        }
+        return null;
+    }
+
     function renderPlayerData(players, matches, tableBody) {
         players.slice(1).forEach((player) => {
             const playerName = player[2];
@@ -205,7 +213,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     showLoader();
 
-    const allData = await fetchAllData();
+    const allData = await loadAllData();
     if (allData) {
         renderPlayerData(allData.firstTable.players, allData.firstTable.matches, firstTableBody);
         renderPlayerData(allData.secondTable.players, allData.secondTable.matches, secondTableBody);
