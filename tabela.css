@@ -862,7 +862,7 @@ footer {
 }
 
 .team-logo-large {
-    height: 40px;
+    height: 45px;
 }
 
 .team-logo-small{
@@ -912,9 +912,9 @@ footer {
 .main-match-result {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 60px;
+    justify-content: space-between; /* Równomiernie rozkłada elementy */
     margin-bottom: 30px;
+    padding: 0 20px; /* Dodatkowy margines, aby zapewnić przestrzeń po bokach */
 }
 
 #match-result-large {
@@ -936,18 +936,40 @@ footer {
     display: flex;
     flex-direction: column; /* Ustawia logo i tekst w kolumnie */
     align-items: center; /* Wyśrodkowanie logo i tekstu */
+    flex-basis: 85px; /* Ustalona szerokość dla obu kolumn drużyn */
+    text-align: center; /* Wyrównanie tekstu drużyn */
 }
 
-.score-container{
+.score-container {
     display: flex;
-    flex-direction: column; /* Ustawia logo i tekst w kolumnie */
-    align-items: center; /* Wyśrodkowanie logo i tekstu */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px; /* Dopasuj szerokość, aby wynik był zawsze wyśrodkowany */
 }
+
 
 .score-text {
     text-align: center; /* Wyśrodkowanie tekstu */
     font-size: 12px;
     order: 1; /* Ustawienie kolejności, by pojawił się pod logo */
+    color: #8e9399;
+    font-weight: bold;
+}
+
+
+.league-name {
+    text-align:center;
+    color: #7a84ff;
+    font-size: 14px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    border-radius: 8px 8px 0 0;
+}
+
+.date {
+    text-align: center; /* Wyśrodkowanie tekstu */
+    font-size: 12px;
     color: #8e9399;
     font-weight: bold;
 }
