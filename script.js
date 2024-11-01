@@ -251,6 +251,55 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
+
+    function colorizeResult(resultString) {
+    // Sprawdzenie, czy wynik to ":" (mecz się jeszcze nie odbył)
+    if (resultString === ":") {
+        return `<span style="color: gray;">:</span>`;
+    }
+
+    const overtimeMatch = resultString.includes('(');
+    let mainResult, overtimeScore;
+    
+    if (overtimeMatch) {
+        // Rozdzielamy wynik główny i wynik dogrywki
+        const parts = resultString.split(' ');
+        mainResult = parts[0];
+        overtimeScore = parts[1].slice(1, -1);  // Usuwamy nawiasy
+    } else {
+        mainResult = resultString;
+    }
+
+    // Rozdzielamy główny wynik na bramki
+    const [leftScore, rightScore] = mainResult.split(':').map(Number);
+
+    // Określamy kolory na podstawie wyniku
+    let leftColor = 'gray', rightColor = 'gray', colonColor = 'gray';
+    
+    if (overtimeMatch) {
+        // Jeśli jest dogrywka, kolorujemy wynik dogrywki na biało
+        leftColor = overtimeScore == leftScore ? 'white' : 'gray';
+        rightColor = overtimeScore == rightScore ? 'white' : 'gray';
+    } else if (leftScore > rightScore) {
+        // Zwycięstwo lewego zespołu
+        leftColor = 'white';
+    } else if (rightScore > leftScore) {
+        // Zwycięstwo prawego zespołu
+        rightColor = 'white';
+    }
+
+    // Generujemy HTML z kolorami
+    const coloredResult = `
+        <span style="color: ${leftColor};">${leftScore}</span>
+        <span style="color: ${colonColor};">:</span>
+        <span style="color: ${rightColor};">${rightScore}</span>
+        ${overtimeMatch ? `<span style="color: ${rightColor};"> (${overtimeScore})</span>` : ''}
+    `;
+
+    return coloredResult;
+}
+
+    
     
     function openMatchModal(matchElement, matches, matchIndex) {
         if (!matches || !matches[matchIndex]) {
@@ -269,7 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.getElementById('left-team-logo-large').src = leftLogo;
         document.getElementById('right-team-logo-large').src = rightLogo;
-        document.getElementById('match-result-large').textContent = realMatchResult;
+        document.getElementById('match-result-large').innerHTML = colorizeResult(realMatchResult);
         document.getElementById('left-text').textContent = leftTeam;
         document.getElementById('right-text').textContent = rightTeam;
         document.getElementById('score-text').textContent = gamestatus;
