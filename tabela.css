@@ -911,7 +911,6 @@ footer {
 
 .main-match-result {
     display: flex;
-    align-items: center;
     justify-content: space-between; /* Równomiernie rozkłada elementy */
     margin-bottom: 30px;
     padding: 0 20px; /* Dodatkowy margines, aby zapewnić przestrzeń po bokach */
