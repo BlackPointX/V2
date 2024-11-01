@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Nie znaleziono elementu firstTableBody. Upewnij się, że element o id "first-table-body" istnieje w HTML.');
         }
         if (!secondTableBody) {
-            console.error('Nie znaleziono elementu secondTableBody. Upewnij się, że element o id "loading-spinner" istnieje w HTML.');
+            console.error('Nie znaleziono elementu secondTableBody. Upewnij się, że element o id "second-table-body" istnieje w HTML.');
         }
         return;
     }
@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         loader.style.display = 'none';
     }
 
-    // Funkcja pobierająca wszystkie dane z API, jeśli nie są jeszcze w sessionStorage
     async function fetchAllData() {
         const cachedData = sessionStorage.getItem('allApiData');
         if (cachedData) {
@@ -72,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Funkcja ładująca dane z sessionStorage lub z API
     async function loadAllData() {
         const allData = await fetchAllData();
         if (allData) {
@@ -81,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return null;
     }
 
-    function renderPlayerData(players, matches, tableBody) {
+    function renderPlayerData(players, matches, tableBody, tableType) {
         players.slice(1).forEach((player) => {
             const playerName = player[2];
             const playerIndex = playerIndexMapping[playerName];
@@ -129,6 +127,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             tableBody.appendChild(row);
             tableBody.appendChild(detailsRow);
+
+            // Event listener dla wyników
+            detailsRow.querySelectorAll('.match-result').forEach(match => {
+                match.addEventListener('click', function () {
+                    const matchIndex = parseInt(this.getAttribute('data-match-index'), 10);
+                    openMatchModal(this, tableType === 'firstTable' ? matches : allData.secondTable.matches, matchIndex);
+                });
+            });
         });
     }
 
@@ -171,12 +177,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function generateMatchResults(matches, playerIndex) {
         let results = '<div class="match-grid">';
-        matches.forEach(match => {
+        matches.forEach((match, index) => {  
             const playerScoreData = match[playerIndex];
             const playerScore = playerScoreData.split('/')[0];
             const suffix = playerScoreData.split('/')[1];
             let backgroundColor;
             let borderClass = '';
+            
             switch (suffix) {
                 case 'y':
                     backgroundColor = '#a79907';
@@ -199,8 +206,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 default:
                     backgroundColor = 'rgba(200, 200, 200, 0.8)';
             }
+            
             results += `
-                <div class="match-result ${borderClass}" style="background-color: ${backgroundColor};">
+                <div class="match-result ${borderClass}" style="background-color: ${backgroundColor};" data-match-index="${index}">
                     <img src="${match[4]}" alt="Logo 1" class="club-logo">
                     <span>${playerScore}</span>
                     <img src="${match[5]}" alt="Logo 2" class="club-logo">
@@ -211,12 +219,91 @@ document.addEventListener('DOMContentLoaded', async () => {
         return results;
     }
 
+    /**
+     * Funkcja do parsowania wyniku i stylu
+     * @param {string} resultString - Wynik z dodatkowymi informacjami, np. "2:2/g"
+     * @returns {Object} - Obiekt zawierający wyświetlany wynik i klasę stylu
+     */
+    function parseResult(resultString) {
+        // Sprawdzenie, czy wynik zawiera '/'
+        const separatorIndex = resultString.lastIndexOf('/');
+        if (separatorIndex === -1) {
+            // Jeśli nie ma '/', zwracamy cały wynik bez stylu
+            return { displayResult: resultString, backgroundStyle: 'red' }; // Domyślnie czerwony
+        }
+
+        let displayPart = resultString.substring(0, separatorIndex);
+        const styleCode = resultString.substring(separatorIndex + 1).toLowerCase();
+
+        // Mapowanie kodów stylów na klasy CSS
+        const styleMap = {
+            'g': 'green',
+            'y': 'yellow',
+            'r': 'red',
+            'gl': 'blink-green',  // Migający zielony
+            'yl': 'blink-yellow', // Migający żółty
+            'rl': 'blink-red'     // Migający czerwony
+        };
+
+        return {
+            displayResult: displayPart.trim(),
+            backgroundStyle: styleMap[styleCode] || 'red' // Domyślnie czerwony
+        };
+    }
+
+    
+    function openMatchModal(matchElement, matches, matchIndex) {
+        if (!matches || !matches[matchIndex]) {
+            console.error(`Brak danych dla matchIndex: ${matchIndex}`);
+            return;
+        }
+
+        const leftLogo = matches[matchIndex][4];
+        const rightLogo = matches[matchIndex][5];
+        const realMatchResult = matches[matchIndex][6];
+        const leftTeam = matches[matchIndex][7];
+        const rightTeam = matches[matchIndex][8];
+        const gamestatus = matches[matchIndex][10];
+
+        document.getElementById('left-team-logo-large').src = leftLogo;
+        document.getElementById('right-team-logo-large').src = rightLogo;
+        document.getElementById('match-result-large').textContent = realMatchResult;
+        document.getElementById('left-text').textContent = leftTeam;
+        document.getElementById('right-text').textContent = rightTeam;
+        document.getElementById('score-text').textContent = gamestatus;
+
+        const resultsForMatch = matches[matchIndex].slice(0, 4);
+        for (let i = 1; i <= 4; i++) {
+            const parsedResult = parseResult(resultsForMatch[i - 1]);
+            document.getElementById(`small-match-result-${i}`).textContent = parsedResult.displayResult;
+            const smallMatchElement = document.getElementById(`small-match-${i}`);
+            smallMatchElement.className = `small-match ${parsedResult.backgroundStyle}`;
+            document.getElementById(`player-avatar-${i}`).src = avatars[i - 1];
+            document.getElementById(`small-left-logo-${i}`).src = leftLogo;
+            document.getElementById(`small-right-logo-${i}`).src = rightLogo;
+        }
+
+        const modal = document.getElementById('match-modal');
+        modal.style.display = 'flex';
+
+        const closeModal = document.getElementById('close-modal');
+        closeModal.addEventListener('click', closeMatchModal);
+    }
+    
+    function closeMatchModal() {
+        const modal = document.getElementById('match-modal');
+        modal.style.display = 'none';
+
+        const closeModal = document.getElementById('close-modal');
+        closeModal.removeEventListener('click', closeMatchModal);
+    }
+
     showLoader();
 
     const allData = await loadAllData();
     if (allData) {
-        renderPlayerData(allData.firstTable.players, allData.firstTable.matches, firstTableBody);
-        renderPlayerData(allData.secondTable.players, allData.secondTable.matches, secondTableBody);
+        renderPlayerData(allData.firstTable.players, allData.firstTable.matches, firstTableBody, 'firstTable');
+        renderPlayerData(allData.secondTable.players, allData.secondTable.matches, secondTableBody, 'secondTable');
     }
 
     hideLoader();
