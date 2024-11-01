@@ -263,7 +263,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const realMatchResult = matches[matchIndex][6];
         const leftTeam = matches[matchIndex][7];
         const rightTeam = matches[matchIndex][8];
+        const date = matches[matchIndex][9];
         const gamestatus = matches[matchIndex][10];
+        const leagueName = matches[matchIndex][11];
 
         document.getElementById('left-team-logo-large').src = leftLogo;
         document.getElementById('right-team-logo-large').src = rightLogo;
@@ -271,6 +273,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('left-text').textContent = leftTeam;
         document.getElementById('right-text').textContent = rightTeam;
         document.getElementById('score-text').textContent = gamestatus;
+        document.getElementById('league-name').textContent = leagueName;
+        document.getElementById('date').textContent = date;
 
         const resultsForMatch = matches[matchIndex].slice(0, 4);
         for (let i = 1; i <= 4; i++) {
