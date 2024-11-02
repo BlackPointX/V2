@@ -973,3 +973,21 @@ footer {
     font-weight: bold;
     padding-bottom: 5px;
 }
+
+.blinking-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 3px;
+        margin-bottom: 3px;
+        background-color: red;
+        border-radius: 50%;
+        animation: blinking 1s infinite;
+        vertical-align: middle;
+}
+
+@keyframes blinking {
+        0% { opacity: 1; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+}
