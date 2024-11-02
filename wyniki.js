@@ -183,11 +183,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
                 matchesContainer.appendChild(kolejkaDivider);
-        
+            
+                // Container for matches within this "Kolejka"
                 matchesForKolejka = document.createElement('div');
                 matchesForKolejka.classList.add('matches-for-date');
                 matchesContainer.appendChild(matchesForKolejka);
+            
+                // Add summary of points after matches within each "Kolejka"
+                const pointsSummary = document.createElement('div');
+                pointsSummary.classList.add('points-summary');
+                pointsSummary.innerHTML = `
+                <section class="result-divider">
+                <span>Wyniki</span>
+                    <div class="results-container">
+                        <div class="points">
+                            <span style="color:white; font-size:14px;">50</span>
+                            <span style="color:green; font-size:12px;">+6</span>
+                        </div>
+                        <div class="points">
+                            <span style="color:white; font-size:14px;">45</span>
+                            <span style="color:green; font-size:12px;">+5</span>
+                        </div>
+                        <div class="points">
+                            <span style="color:white; font-size:14px;">47</span>
+                            <span style="color:green; font-size:12px;">+7</span>
+                        </div>
+                        <div class="points">
+                            <span style="color:white; font-size:14px;">52</span>
+                            <span style="color:green; font-size:12px;">+8</span>
+                        </div>
+                    </div>
+                </section>
+                `;
+                matchesContainer.appendChild(pointsSummary);
             }
+            
         
             createKolejkaSection(currentKolejka);
         
