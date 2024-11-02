@@ -321,7 +321,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('match-result-large').innerHTML = colorizeResult(realMatchResult);
         document.getElementById('left-text').textContent = leftTeam;
         document.getElementById('right-text').textContent = rightTeam;
-        document.getElementById('score-text').textContent = gamestatus;
+       
+        // Sprawdzenie statusu gry i ustawienie mrugającej kropki, jeśli status to "live"
+    const scoreTextElement = document.getElementById('score-text');
+    if (gamestatus.toLowerCase() === "live") {
+        scoreTextElement.innerHTML = `<span class="blinking-dot"></span> ${gamestatus}`;
+    } else {
+        scoreTextElement.textContent = gamestatus;
+    }
+    
         document.getElementById('league-name').textContent = leagueName;
         document.getElementById('date').textContent = date;
 
