@@ -418,8 +418,7 @@ footer {
 /* Kontener dla meczów danego dnia */
 .matches-for-date {
     background-color: #1A252F; /* Ciemniejsze tło dla meczów */
-    margin: 0 15px 15px 15px;
-    border-radius: 0 0 8px 8px;
+    margin: 0 15px 0 15px;
     overflow: hidden;
 }
 
@@ -805,4 +804,32 @@ footer {
 #switch-container button.active {
     border-top: 4px solid #3498DB;
     color: #fff;
+}
+
+
+.result-divider {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Wyśrodkowuje elementy w pionie */
+    padding: 10px 5px 8px 15px;
+    background-color: #171E24;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0 15px 0 15px;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid #2C3E50;
+}
+
+.results-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 13px;
+    margin-right: 8px;
+}
+
+.points {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
 }
