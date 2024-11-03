@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return {
                     date: match[15],
                     leagueName: match[17],
-                    leagueLogo: 'https://via.placeholder.com/16',
+                    leagueLogo: 'https://www.thesportsdb.com/images/icons/fanart2.png',
                     time: match[15].split(' ')[1],
                     status: 'FT',
                     homeTeam: match[1],
