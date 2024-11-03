@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'r': color = 'red'; break;
                 case 'g': color = 'green'; break;
                 case 'yg': color = '#87CEEB'; break;
-                default: color = 'black'; break;
+                default: color = '#5690B5'; break;
             }
         
             return {
