@@ -49,15 +49,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Funkcja sprawdzająca wyniki gracza
     function checkPlayerResults(results, playerName) {
-        const playerIndex = results[0].indexOf(playerName);
+        // Mapowanie nazw graczy na ich indeksy w tabeli wyników
+        const playerIndexes = {
+            'Mariusz': 0,
+            'Łukasz': 1,
+            'Mateusz': 2,
+            'Patryk': 3
+        };
+    
+        // Pobierz indeks dla danego gracza
+        const playerIndex = playerIndexes[playerName];
+    
+        // Jeśli gracza nie ma w mapowaniu, zwróć false
+        if (playerIndex === undefined) return false;
+    
+        // Sprawdź każdy wynik gracza, aby upewnić się, że żaden nie jest "n\\o"
         for (let i = 1; i < results.length; i++) {
-            if (results[i][playerIndex] === 'n\\o') {
+            const playerResult = results[i][playerIndex];
+            
+            // Jeśli wynik to dokładnie "n\\o", zwróć false
+            if (playerResult === 'n\\o') {
                 return false;
             }
         }
         return true;
     }
+    
+    
+    
 
+
+    
     // Funkcja tworząca awatary graczy i ich statusy
     async function createPlayerAvatars() {
         const allData = await loadAllData();
@@ -94,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             betLigaRow.classList.add('row');
 
             const betLigaLink = document.createElement('a');
-            betLigaLink.href = 'https://forms.gle/DvzSj17dyeqaTWd9A';
+            betLigaLink.href = 'https://forms.gle/WJXFNxkktQABPkW39';
             betLigaLink.textContent = 'Formularz BetLiga';
             betLigaLink.classList.add('link');
             betLigaRow.appendChild(betLigaLink);
@@ -110,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             lmRow.classList.add('row');
 
             const lmLink = document.createElement('a');
-            lmLink.href = 'https://forms.gle/W3wknHF7jaefrj5H9';
+            lmLink.href = 'https://forms.gle/seRUjgPk7dctbrW37';
             lmLink.textContent = 'Formularz LM';
             lmLink.classList.add('link');
             lmRow.appendChild(lmLink);
