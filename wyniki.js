@@ -74,6 +74,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         function formatPlayerResult(result) {
+            // Special case for non-standard results
+            if (result === "?" || result === "n/o") {
+                let displayResult = result === "?" ? "?:?" : "n:o";
+                return {
+                    homePlayer: `<span style="color:black">${displayResult.split(':')[0]}</span>`,
+                    awayPlayer: `<span style="color:black">${displayResult.split(':')[1]}</span>`
+                };
+            }
+        
             const [scores, suffix] = result.split('/');
             let homePlayerScore = "0", awayPlayerScore = "0", homePlayerClass = "", awayPlayerClass = "", color = "black";
         
@@ -108,6 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 awayPlayer: `<span class="${awayPlayerClass}" style="color:${color}">${awayPlayerScore}</span>`
             };
         }
+        
 
         function getTeamColors(homeScore, awayScore, homeScoreClass, awayScoreClass) {
             if (homeScoreClass === "winner-circle") {
