@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wykres Pozycji</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Stylowanie strony */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2d2d2d;
+      color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 5px;
+    }
+
+    /* Kontener na wykres */
+    #chart-container {
+      width: 100%;
+      max-width: 100%;
+      height: 200px; /* Ustawienie stałej wysokości */
+      margin: auto;
+      padding: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Sekcja wyników meczów */
+    #match-day-results, #position-table {
+      background-color: #1a1a1a;
+      border-radius: 5px;
+      padding: 5px;
+      max-width: 90%;
+      margin: 5px auto;
+      font-size: 0.8em;
+    }
+
+    #match-day-results h2, #position-table h2 {
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+
+    #resultsList {
+      list-style: none;
+      padding: 0;
+      font-size: 0.8em;
+    }
+
+    #resultsList li {
+      padding: 3px;
+      background-color: #333;
+      border-radius: 3px;
+      margin: 3px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8em;
+    }
+
+    table, th, td {
+      border: 1px solid #333;
+    }
+
+    th, td {
+      padding: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1 style="font-size: 1em; margin-bottom: 5px;">Pozycja w Tabeli</h1>
+
+<div id="chart-container">
+  <canvas id="positionChart"></canvas>
+</div>
+
+<div id="position-table">
+  <h2>Pozycje Zawodników dla Kolejki <span id="tableDayLabel">1</span></h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Zawodnik</th>
+        <th>Pozycja</th>
+      </tr>
+    </thead>
+    <tbody id="positionTableBody">
+      <tr><td>Uczestnik A</td><td>1</td></tr>
+      <tr><td>Uczestnik B</td><td>1</td></tr>
+      <tr><td>Uczestnik C</td><td>1</td></tr>
+      <tr><td>Uczestnik D</td><td>1</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="match-day-results">
+  <h2>Wyniki Meczów dla Kolejki <span id="dayResultsLabel">1</span></h2>
+  <ul id="resultsList"></ul>
+</div>
+
+<script>
+  // Dane pozycji dla 4 uczestników w 30 kolejkach
+  const positionData = {
+    labels: Array.from({ length: 30 }, (_, i) => i + 1),
+    datasets: [
+      {
+        label: 'Uczestnik A',
+        data: [2, 1, 3, 1, 2, 2, 1, 1, 1, 1, 2, 2, 3, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 2, 1],
+        borderColor: '#00ff00',
+        borderWidth: 1,
+        pointRadius: 0,
+        fill: false,
+      },
+      {
+        label: 'Uczestnik B',
+        data: [3, 2, 2, 3, 1, 1, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2],
+        borderColor: '#00aaff',
+        borderWidth: 1,
+        pointRadius: 0,
+        fill: false,
+      },
+      {
+        label: 'Uczestnik C',
+        data: [1, 3, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        borderColor: '#ff3333',
+        borderWidth: 1,
+        pointRadius: 0,
+        fill: false,
+      },
+      {
+        label: 'Uczestnik D',
+        data: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+        borderColor: '#ffaa00',
+        borderWidth: 1,
+        pointRadius: 0,
+        fill: false,
+      }
+    ]
+  };
+
+  // Funkcja do generowania losowych wyników meczów
+  function generateRandomResults() {
+    const results = {};
+    for (let i = 1; i <= 30; i++) {
+      const scoreA = Math.floor(Math.random() * 5);
+      const scoreB = Math.floor(Math.random() * 5);
+      const scoreC = Math.floor(Math.random() * 5);
+      const scoreD = Math.floor(Math.random() * 5);
+      results[i] = [
+        `A ${scoreA}-${scoreB} B`,
+        `C ${scoreC}-${scoreD} D`
+      ];
+    }
+    return results;
+  }
+
+  // Losowe wyniki meczów dla każdej kolejki
+  const matchResults = generateRandomResults();
+
+  // Funkcja aktualizująca wyniki meczów dla zaznaczonej kolejki i tabelę pozycji
+  function updateMatchResults(day) {
+    document.getElementById('dayResultsLabel').innerText = day;
+    document.getElementById('tableDayLabel').innerText = day;
+
+    // Wyniki meczów
+    const resultsList = document.getElementById('resultsList');
+    resultsList.innerHTML = '';
+    if (matchResults[day]) {
+      matchResults[day].forEach(result => {
+        const li = document.createElement('li');
+        li.textContent = result;
+        resultsList.appendChild(li);
+      });
+    }
+
+    // Aktualizacja tabeli pozycji
+    const positionTableBody = document.getElementById('positionTableBody');
+    positionTableBody.innerHTML = ''; // Resetowanie tabeli
+
+    positionData.datasets.forEach((dataset, index) => {
+      const tr = document.createElement('tr');
+      const nameTd = document.createElement('td');
+      nameTd.textContent = dataset.label;
+
+      const positionTd = document.createElement('td');
+      positionTd.textContent = dataset.data[day - 1]; // Pozycja na podstawie wybranego dnia
+
+      tr.appendChild(nameTd);
+      tr.appendChild(positionTd);
+      positionTableBody.appendChild(tr);
+    });
+  }
+
+  // Plugin do rysowania linii zaznaczającej wybraną kolejkę i zasłonięcia prawej części
+  let activeIndex = null;
+  const verticalLinePlugin = {
+    id: 'verticalLinePlugin',
+    afterDraw: (chart) => {
+      if (activeIndex !== null) {
+        const ctx = chart.ctx;
+        const x = chart.scales.x.getPixelForValue(activeIndex);
+        
+        // Rysowanie pionowej linii
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x, chart.chartArea.top);
+        ctx.lineTo(x, chart.chartArea.bottom);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+        
+        // Zakrywanie prawej części wykresu
+        ctx.fillStyle = 'rgba(26, 26, 26, 0.9)'; // Kolor zasłonięcia
+        ctx.fillRect(x, chart.chartArea.top, chart.chartArea.right - x, chart.chartArea.bottom - chart.chartArea.top);
+        ctx.restore();
+      }
+    }
+  };
+
+  // Inicjalizacja wykresu z Chart.js z interaktywnością
+  const ctx = document.getElementById('positionChart').getContext('2d');
+  const positionChart = new Chart(ctx, {
+    type: 'line',
+    data: positionData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          enabled: false,
+          external: function(context) {
+            const index = context.tooltip.dataPoints?.[0]?.dataIndex + 1;
+            if (index) updateMatchResults(index);
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0.8,  // Ustawienie minimalnej wartości na 0.8, aby dodać margines
+          max: 4,
+          reverse: true,
+          ticks: { stepSize: 1, color: '#aaa', font: { size: 8 } },
+          grid: { color: '#333' }
+        },
+        x: {
+          ticks: { color: '#aaa', font: { size: 8 } },
+          grid: { color: '#333' }
+        }
+      },
+      onHover: (event) => {
+        const points = positionChart.getElementsAtEventForMode(event, 'index', { intersect: false }, true);
+        if (points.length) {
+          activeIndex = points[0].index; // Ustaw aktywny indeks
+          const selectedDay = activeIndex + 1;
+          updateMatchResults(selectedDay);
+          positionChart.draw();
+        } else {
+          activeIndex = null;
+          positionChart.draw();
+        }
+      }
+    },
+    plugins: [verticalLinePlugin]
+  });
+
+  // Wstępne ustawienie wyników dla kolejki 1
+  updateMatchResults(1);
+
+</script>
+
+</body>
+</html>
