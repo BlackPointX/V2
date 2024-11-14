@@ -20,7 +20,7 @@
     #chart-container {
       width: 100%;
       max-width: 100%;
-      height: 200px; /* Ustawienie stałej wysokości */
+      height: 200px;
       margin: auto;
       padding: 0;
       background-color: #1a1a1a;
@@ -104,46 +104,7 @@
 </div>
 
 <script>
-  // Dane pozycji dla 4 uczestników w 30 kolejkach
-  const positionData = {
-    labels: Array.from({ length: 30 }, (_, i) => i + 1),
-    datasets: [
-      {
-        label: 'Uczestnik A',
-        data: [2, 1, 3, 1, 2, 2, 1, 1, 1, 1, 2, 2, 3, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 2, 1],
-        borderColor: '#00ff00',
-        borderWidth: 1,
-        pointRadius: 0,
-        fill: false,
-      },
-      {
-        label: 'Uczestnik B',
-        data: [3, 2, 2, 3, 1, 1, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2],
-        borderColor: '#00aaff',
-        borderWidth: 1,
-        pointRadius: 0,
-        fill: false,
-      },
-      {
-        label: 'Uczestnik C',
-        data: [1, 3, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        borderColor: '#ff3333',
-        borderWidth: 1,
-        pointRadius: 0,
-        fill: false,
-      },
-      {
-        label: 'Uczestnik D',
-        data: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        borderColor: '#ffaa00',
-        borderWidth: 1,
-        pointRadius: 0,
-        fill: false,
-      }
-    ]
-  };
-
-  // Funkcja do generowania losowych wyników meczów
+  // Generowanie losowych wyników meczów dla każdej kolejki
   function generateRandomResults() {
     const results = {};
     for (let i = 1; i <= 30; i++) {
@@ -159,119 +120,178 @@
     return results;
   }
 
-  // Losowe wyniki meczów dla każdej kolejki
+  // Inicjalizacja matchResults z losowymi danymi na potrzeby testowania
   const matchResults = generateRandomResults();
 
-  // Funkcja aktualizująca wyniki meczów dla zaznaczonej kolejki i tabelę pozycji
-  function updateMatchResults(day) {
-    document.getElementById('dayResultsLabel').innerText = day;
-    document.getElementById('tableDayLabel').innerText = day;
+  // Funkcja pobierająca dane z API lub sessionStorage
+  async function fetchAllData() {
+    const cacheDuration = 2 * 60 * 1000; // Cache data for 5 minutes
+    const cachedData = sessionStorage.getItem('allApiData');
+    const cachedTime = sessionStorage.getItem('allApiDataTimestamp');
 
-    // Wyniki meczów
-    const resultsList = document.getElementById('resultsList');
-    resultsList.innerHTML = '';
-    if (matchResults[day]) {
-      matchResults[day].forEach(result => {
-        const li = document.createElement('li');
-        li.textContent = result;
-        resultsList.appendChild(li);
+    if (cachedData && cachedTime && (Date.now() - parseInt(cachedTime, 10)) < cacheDuration) {
+      return JSON.parse(cachedData);
+    }
+
+    try {
+      const [firstTableResponse, secondTableResponse, matchesResponse, lmResponse] = await Promise.all([
+        fetch('https://script.google.com/macros/s/AKfycbzKHTwb1o2HzhOS6_OY9M_PRm1jSpEgfb-OIzZ8jVMEmyt9RSU8kx407lCImbMzVCUYNA/exec'),
+        fetch('https://script.google.com/macros/s/AKfycbyr4gVCSGs93yIMMd1ogqiR-EOL7sAgMIgf4izRBce_zJIUSwT1ZyaTo6yvS0M8xy8MTg/exec'),
+        fetch('https://script.google.com/macros/s/AKfycbxPKj0TKn1XMYUdf6C7JNZWrqgl6T8sT4LON9bq0lcDHDHuFda3yPd20PgDkfakvCumEg/exec?page=Komplet'),
+        fetch('https://script.google.com/macros/s/AKfycbwJW9UnKuZ3dD-YH2GLfE0Py6vqLR9Z787V8QHatbXdzYtmmkw5NelfKWYbq4X-30xqDw/exec?page=Komplet')
+      ]);
+
+      const [firstTableData, secondTableData, matchesData, lmData] = await Promise.all([
+        firstTableResponse.json(),
+        secondTableResponse.json(),
+        matchesResponse.json(),
+        lmResponse.json()
+      ]);
+
+      const allData = {
+        firstTable: { players: firstTableData.WWW, matches: firstTableData.Wyniki.slice(1) },
+        secondTable: { players: secondTableData.WWW, matches: secondTableData.Wyniki.slice(1) },
+        BetLiga: matchesData.Komplet.slice(1),
+        LigaMistrzow: lmData.Komplet.slice(1)
+      };
+
+      sessionStorage.setItem('allApiData', JSON.stringify(allData));
+      sessionStorage.setItem('allApiDataTimestamp', Date.now().toString());
+
+      return allData;
+    } catch (error) {
+      console.error('Error fetching all data:', error);
+      return null;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const allData = await fetchAllData();
+    if (allData) {
+      console.log("Dane załadowane:", allData);
+    }
+
+    const positionData = {
+      labels: [],
+      datasets: [
+        { label: 'Mariusz', data: [], borderColor: '#00ff00', borderWidth: 1, pointRadius: 0, fill: false },
+        { label: 'Łukasz', data: [], borderColor: '#00aaff', borderWidth: 1, pointRadius: 0, fill: false },
+        { label: 'Mateusz', data: [], borderColor: '#ff3333', borderWidth: 1, pointRadius: 0, fill: false },
+        { label: 'Patryk', data: [], borderColor: '#ffaa00', borderWidth: 1, pointRadius: 0, fill: false }
+      ]
+    };
+
+    allData.BetLiga.forEach((kolejka, index) => {
+  // Sprawdzamy, czy wartości są liczbami, aby upewnić się, że nie są puste
+  if (typeof kolejka[18] === 'number' && typeof kolejka[19] === 'number' && typeof kolejka[20] === 'number' && typeof kolejka[21] === 'number') {
+    const kolejkaNumber = positionData.labels.length + 1;
+    positionData.labels.push(kolejkaNumber);
+    positionData.datasets[0].data.push(kolejka[18]);
+    positionData.datasets[1].data.push(kolejka[19]);
+    positionData.datasets[2].data.push(kolejka[20]);
+    positionData.datasets[3].data.push(kolejka[21]);
+  }
+});
+
+
+
+    function updateMatchResults(day) {
+      document.getElementById('dayResultsLabel').innerText = day;
+      document.getElementById('tableDayLabel').innerText = day;
+
+      const resultsList = document.getElementById('resultsList');
+      resultsList.innerHTML = '';
+      if (matchResults[day]) {
+        matchResults[day].forEach(result => {
+          const li = document.createElement('li');
+          li.textContent = result;
+          resultsList.appendChild(li);
+        });
+      }
+
+      const positionTableBody = document.getElementById('positionTableBody');
+      positionTableBody.innerHTML = '';
+      positionData.datasets.forEach((dataset, index) => {
+        const tr = document.createElement('tr');
+        const nameTd = document.createElement('td');
+        nameTd.textContent = dataset.label;
+        const positionTd = document.createElement('td');
+        positionTd.textContent = dataset.data[day - 1] ?? '-';
+        tr.appendChild(nameTd);
+        tr.appendChild(positionTd);
+        positionTableBody.appendChild(tr);
       });
     }
 
-    // Aktualizacja tabeli pozycji
-    const positionTableBody = document.getElementById('positionTableBody');
-    positionTableBody.innerHTML = ''; // Resetowanie tabeli
-
-    positionData.datasets.forEach((dataset, index) => {
-      const tr = document.createElement('tr');
-      const nameTd = document.createElement('td');
-      nameTd.textContent = dataset.label;
-
-      const positionTd = document.createElement('td');
-      positionTd.textContent = dataset.data[day - 1]; // Pozycja na podstawie wybranego dnia
-
-      tr.appendChild(nameTd);
-      tr.appendChild(positionTd);
-      positionTableBody.appendChild(tr);
-    });
-  }
-
-  // Plugin do rysowania linii zaznaczającej wybraną kolejkę i zasłonięcia prawej części
-  let activeIndex = null;
-  const verticalLinePlugin = {
-    id: 'verticalLinePlugin',
-    afterDraw: (chart) => {
-      if (activeIndex !== null) {
-        const ctx = chart.ctx;
-        const x = chart.scales.x.getPixelForValue(activeIndex);
-        
-        // Rysowanie pionowej linii
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(x, chart.chartArea.top);
-        ctx.lineTo(x, chart.chartArea.bottom);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#ffffff';
-        ctx.stroke();
-        
-        // Zakrywanie prawej części wykresu
-        ctx.fillStyle = 'rgba(26, 26, 26, 0.9)'; // Kolor zasłonięcia
-        ctx.fillRect(x, chart.chartArea.top, chart.chartArea.right - x, chart.chartArea.bottom - chart.chartArea.top);
-        ctx.restore();
+    let activeIndex = null;
+    const verticalLinePlugin = {
+      id: 'verticalLinePlugin',
+      afterDraw: (chart) => {
+        if (activeIndex !== null) {
+          const ctx = chart.ctx;
+          const x = chart.scales.x.getPixelForValue(activeIndex);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x, chart.chartArea.top);
+          ctx.lineTo(x, chart.chartArea.bottom);
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#ffffff';
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(26, 26, 26, 0.9)';
+          ctx.fillRect(x, chart.chartArea.top, chart.chartArea.right - x, chart.chartArea.bottom - chart.chartArea.top);
+          ctx.restore();
+        }
       }
-    }
-  };
+    };
 
-  // Inicjalizacja wykresu z Chart.js z interaktywnością
-  const ctx = document.getElementById('positionChart').getContext('2d');
-  const positionChart = new Chart(ctx, {
-    type: 'line',
-    data: positionData,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          enabled: false,
-          external: function(context) {
-            const index = context.tooltip.dataPoints?.[0]?.dataIndex + 1;
-            if (index) updateMatchResults(index);
+    const ctx = document.getElementById('positionChart').getContext('2d');
+    const positionChart = new Chart(ctx, {
+      type: 'line',
+      data: positionData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: false,
+            external: function(context) {
+              const index = context.tooltip.dataPoints?.[0]?.dataIndex + 1;
+              if (index) updateMatchResults(index);
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0.8,
+            max: 4,
+            reverse: true,
+            ticks: { stepSize: 1, color: '#aaa', font: { size: 8 } },
+            grid: { color: '#333' }
+          },
+          x: {
+            ticks: { color: '#aaa', font: { size: 8 } },
+            grid: { color: '#333' }
+          }
+        },
+        onHover: (event) => {
+          const points = positionChart.getElementsAtEventForMode(event, 'index', { intersect: false }, true);
+          if (points.length) {
+            activeIndex = points[0].index;
+            const selectedDay = activeIndex + 1;
+            updateMatchResults(selectedDay);
+            positionChart.draw();
+          } else {
+            activeIndex = null;
+            positionChart.draw();
           }
         }
       },
-      scales: {
-        y: {
-          min: 0.8,  // Ustawienie minimalnej wartości na 0.8, aby dodać margines
-          max: 4,
-          reverse: true,
-          ticks: { stepSize: 1, color: '#aaa', font: { size: 8 } },
-          grid: { color: '#333' }
-        },
-        x: {
-          ticks: { color: '#aaa', font: { size: 8 } },
-          grid: { color: '#333' }
-        }
-      },
-      onHover: (event) => {
-        const points = positionChart.getElementsAtEventForMode(event, 'index', { intersect: false }, true);
-        if (points.length) {
-          activeIndex = points[0].index; // Ustaw aktywny indeks
-          const selectedDay = activeIndex + 1;
-          updateMatchResults(selectedDay);
-          positionChart.draw();
-        } else {
-          activeIndex = null;
-          positionChart.draw();
-        }
-      }
-    },
-    plugins: [verticalLinePlugin]
+      plugins: [verticalLinePlugin]
+    });
+
+    updateMatchResults(1);
   });
-
-  // Wstępne ustawienie wyników dla kolejki 1
-  updateMatchResults(1);
-
 </script>
 
 </body>
