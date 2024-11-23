@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'r': color = 'red'; break;
                 case 'g': color = 'green'; break;
                 case 'yg': color = '#87CEEB'; break;
-                default: color = '#5690B5'; break;
+                default: color = 'black'; break;
             }
         
             return {
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return {
                     date: match[15],
                     leagueName: match[17],
-                    leagueLogo: 'https://www.thesportsdb.com/images/icons/fanart2.png',
+                    leagueLogo: 'https://via.placeholder.com/16',
                     time: match[15].split(' ')[1],
                     status: 'FT',
                     homeTeam: match[1],
