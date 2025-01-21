@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return {
                     date: match[15],
                     leagueName: match[17],
-                    leagueLogo: 'https://via.placeholder.com/16',
+                    leagueLogo: 'https://w7.pngwing.com/pngs/724/759/png-transparent-apple-logo-apple-computer-icons-apple-logo-heart-computer-logo-thumbnail.png',
                     time: match[15].split(' ')[1],
                     status: 'FT',
                     homeTeam: match[1],
