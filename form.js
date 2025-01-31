@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             betLigaRow.classList.add('row');
 
             const betLigaLink = document.createElement('a');
-            betLigaLink.href = 'https://forms.gle/SQ641ExfP3Q5zzs39';
+            betLigaLink.href = 'https://forms.gle/EHqtEjH8ygugbKHZ6';
             betLigaLink.textContent = 'Formularz BetLiga';
             betLigaLink.classList.add('link');
             betLigaRow.appendChild(betLigaLink);
