@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             lmRow.classList.add('row');
 
             const lmLink = document.createElement('a');
-            lmLink.href = 'https://forms.gle/eL5XsRxABYtHrFs7A';
+            lmLink.href = 'https://forms.gle/uRqLWpv2GTLa1zpw9';
             lmLink.textContent = 'Formularz LM';
             lmLink.classList.add('link');
             lmRow.appendChild(lmLink);
