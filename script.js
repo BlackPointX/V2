@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const date = matches[matchIndex][9];
         const gamestatus = matches[matchIndex][10];
         const leagueName = matches[matchIndex][11];
+        const firstGameRes = matches[matchIndex][12];
 
         document.getElementById('left-team-logo-large').src = leftLogo;
         document.getElementById('right-team-logo-large').src = rightLogo;
@@ -338,7 +339,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         scoreTextElement.textContent = gamestatus;
     }
-    
+
+    // Sprawdzenie, czy firstGameRes zawiera wartość
+    const firstGameResElement = document.getElementById('firstGameRes');
+    if (firstGameRes) {
+        firstGameResElement.textContent = `( ${firstGameRes} )`;
+    } else {
+        firstGameResElement.textContent = ''; // Pozostaw puste, jeśli nie ma wyniku
+    }
+
         document.getElementById('league-name').textContent = leagueName;
         document.getElementById('date').textContent = date;
 
