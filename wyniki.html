@@ -2,15 +2,16 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>MŁMP BetLiga - Wyniki BetLiga</title>
-    <link rel="stylesheet" href="alfa.css">
+    <title>MŁMP BetLiga - Tabele</title>
+    <link rel="stylesheet" href="tabela.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="wyniki.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
-   <header>
+    
+    <header>
         <div class="header-left">
-            <a href="mecze.html">
+            <a href="wyniki.html">
                 <img src="logo.png" alt="Logo SofaScore">
             </a>
         </div>
@@ -19,13 +20,14 @@
             <img src="https://img.icons8.com/material-rounded/24/ffffff/settings.png" alt="Ustawienia">
         </div>
     </header>
+    
     <nav class="top-nav">
-        <a href="tabela.html" class="top-nav-item">
-            <img src="./Icons/Stadium.svg" alt="Football" class="top-nav-icon">
+        <a href="tabela.html" class="top-nav-item active">
+            <img src="./Icons/Stadium.svg" alt="Football" class="top-nav-icon-active">
             <span>Tabele</span>
         </a>
-        <a href="wyniki.html" class="top-nav-item active">
-            <img src="./Icons/wyniki.svg" alt="Basketball" class="top-nav-icon-active">
+        <a href="wyniki.html" class="top-nav-item">
+            <img src="./Icons/wyniki.svg" alt="Basketball" class="top-nav-icon">
             <span>Wyniki</span>
         </a>
         <a href="form.html" class="top-nav-item">
@@ -33,26 +35,61 @@
             <span>Obstawianie</span>
         </a>
     </nav>
-    <main>
-        <div id="switch-container">
-            <button id="switch-betLiga" class="active">BetLiga</button>
-            <button id="switch-ligaMistrzow">Liga Mistrzów</button>
-        </div>
-        <!-- Kontener przewijalny dla meczów -->
-        <div id="matches-container">
-                <div class="switch-overlay"></div>
-            <!-- JavaScript wstawi tutaj daty i mecze -->
+
+
+    <main style="overflow-y: auto;">
+        <section class="table-container">
+            <table class="league-table league-table-bet">
+                <thead>
+                    <tr>
+                        <div class="bet-name" style="background-color:#171E24;">MŁMP BetLiga</div>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="first-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        <section class="table-container">
+            <table class="league-table league-table-lm">
+                <thead>
+                    <tr>
+                        <div class="bet-name">MŁMP BetLiga Champions League Edition</div>
+                        <th>#</th>
+                        <th>Imię</th>
+                        <th>Obst.</th>
+                        <th>Zdob.</th>
+                        <th>Róż.</th>
+                        <th>PKT</th>
+                    </tr>
+                </thead>
+                <tbody id="second-table-body">
+                    <!-- Wiersze będą generowane przez JavaScript -->
+                </tbody>
+            </table>
+        </section>
+        
+        <div id="loading-spinner" class="loading-spinner">
+            <!-- Loader do wyświetlania w trakcie ładowania danych -->
+            <img src="https://www.svgrepo.com/show/135042/soccer-ball.svg" alt="Loading" class="soccer-ball-spinner">
+            <span>Ładowanie danych...</span>
         </div>
     </main>
     <footer>
         <div class="footer-nav">
-            <div class="nav-item">
+            <div class="nav-item active">
                 <a href="tabela.html">
                     <img src="https://img.icons8.com/material-rounded/24/ffffff/select-column" alt="Strona Główna">
                     <span>Tabela</span>
                 </a>
             </div>
-            <div class="nav-item active">
+            <div class="nav-item">
                 <a href="wyniki.html">
                     <img src="https://img.icons8.com/material-rounded/24/ffffff/one-to-one.png" alt="Tabela">
                     <span>Wyniki</span>
@@ -68,8 +105,75 @@
                 <a href="chart.html">
                 <img src="https://img.icons8.com/material-rounded/24/ffffff/statistics" alt="Profil">
                 <span>Wykres</span>
+                </a>
             </div>
         </div>
       </footer>
+
+<!-- Modal window for match results -->
+<div id="match-modal" class="match-modal">
+    <div class="modal-content" id="modal-content">
+        <span class="close-button" id="close-modal">&times;</span>
+        <div class="league-name" id="league-name"></div>
+        <div class="date" id="date"></div>
+        <div class="main-match-result">
+            <div class="team-container">
+                <img src="" alt="Left Team Logo" class="team-logo-large" id="left-team-logo-large">
+                <div class="team-text"id="left-text">Left Team</div>
+            </div>
+            <div class="score-container">
+                <span id="match-result-large"></span>
+                    <div class="score-text" id="score-text"></div>
+                    <div class="firstGameRes" id="firstGameRes"></div>
+                </div>
+            <div class="team-container">
+                <img src="" alt="Right Team Logo" class="team-logo-large" id="right-team-logo-large">
+                <div class="team-text" id="right-text">Right Team</div>
+            </div>
+        </div>
+        <div class="additional-matches">
+            <div class="row">
+                <div class="small-match" id="small-match-1">
+                    <div class="player-info">
+                        <img src="" alt="Player 1 Avatar" class="player-avatar-modal" id="player-avatar-1">
+                    </div>
+                    <img src="" alt="Left Team Logo" class="team-logo-small" id="small-left-logo-1">
+                    <span class="small-match-result" id="small-match-result-1"></span>
+                    <img src="" alt="Right Team Logo" class="team-logo-small" id="small-right-logo-1">
+                </div>
+                <div class="small-match" id="small-match-2">
+                    <div class="player-info">
+                        <img src="" alt="Player 2 Avatar" class="player-avatar-modal" id="player-avatar-2">
+                    </div>
+                    <img src="" alt="Left Team Logo" class="team-logo-small" id="small-left-logo-2">
+                    <span class="small-match-result"  id="small-match-result-2"></span>
+                    <img src="" alt="Right Team Logo" class="team-logo-small" id="small-right-logo-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-match" id="small-match-3">
+                    <div class="player-info">
+                        <img src="" alt="Player 3 Avatar" class="player-avatar-modal" id="player-avatar-3">
+                    </div>
+                    <img src="" alt="Left Team Logo" class="team-logo-small" id="small-left-logo-3">
+                    <span class="small-match-result"  id="small-match-result-3"></span>
+                    <img src="" alt="Right Team Logo" class="team-logo-small" id="small-right-logo-3">
+                </div>
+                <div class="small-match" id="small-match-4">
+                    <div class="player-info">
+                        <img src="" alt="Player 4 Avatar" class="player-avatar-modal" id="player-avatar-4">
+                    </div>
+                    <img src="" alt="Left Team Logo" class="team-logo-small" id="small-left-logo-4">
+                    <span class="small-match-result"  id="small-match-result-4"></span>
+                    <img src="" alt="Right Team Logo" class="team-logo-small" id="small-right-logo-4">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 </body>
 </html>
