@@ -176,14 +176,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     homeScore: `<span class="${homeScoreClass}" style="color:${homeColor}">${homeScore}</span>`,
                     awayScore: `<span class="${awayScoreClass}" style="color:${awayColor}">${awayScore}</span>`,
                     playerResults: [player1, player2, player3, player4],
-                    endOfKolejka: match[10]
+                    endOfKolejka: match[10],
+                    // Dodane punkty graczy:
+            "11": match[11], 
+            "12": match[12], 
+            "13": match[13], 
+            "14": match[14] 
                 };
             });
         }
 
         function renderMatches(matches) {
-            matchesContainer.innerHTML = ''; 
-
+            matchesContainer.innerHTML = '';
+        
             let currentKolejka = 1;
             let matchesForKolejka = document.createElement('div');
             matchesForKolejka.classList.add('matches-for-kolejka');
@@ -201,41 +206,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
                 matchesContainer.appendChild(kolejkaDivider);
-            
-                // Container for matches within this "Kolejka"
+        
                 matchesForKolejka = document.createElement('div');
                 matchesForKolejka.classList.add('matches-for-date');
                 matchesContainer.appendChild(matchesForKolejka);
-            
-                // Add summary of points after matches within each "Kolejka"
-                const pointsSummary = document.createElement('div');
-                pointsSummary.classList.add('points-summary');
-                pointsSummary.innerHTML = `
-                <section class="result-divider">
-                <span>Wyniki</span>
-                    <div class="results-container">
-                        <div class="points">
-                            <span style="color:white; font-size:14px;">50</span>
-                            <span style="color:green; font-size:12px;">+6</span>
-                        </div>
-                        <div class="points">
-                            <span style="color:white; font-size:14px;">45</span>
-                            <span style="color:green; font-size:12px;">+5</span>
-                        </div>
-                        <div class="points">
-                            <span style="color:white; font-size:14px;">47</span>
-                            <span style="color:green; font-size:12px;">+7</span>
-                        </div>
-                        <div class="points">
-                            <span style="color:white; font-size:14px;">52</span>
-                            <span style="color:green; font-size:12px;">+8</span>
-                        </div>
-                    </div>
-                </section>
-                `;
-                matchesContainer.appendChild(pointsSummary);
             }
-            
         
             createKolejkaSection(currentKolejka);
         
@@ -277,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <span class="score-home" style="margin-bottom: 5px;">${playerResult.homePlayer}</span>
                                 <span class="score-away" style="margin-bottom: 0px;">${playerResult.awayPlayer}</span>
                             </div>
-                            ${i < match.playerResults.length - 1 ? '<div class="vertical-separator-result"></div>' : ''}
+                            ${i < match.playerResults.length - 1? '<div class="vertical-separator-result"></div>': ''}
                         `).join('')}
                     </div>
                 `;
@@ -285,6 +260,42 @@ document.addEventListener('DOMContentLoaded', async () => {
                 matchesForKolejka.appendChild(matchElement);
         
                 if (match.endOfKolejka) {
+                    // Tworzymy sekcję dla wyników
+                    const resultSection = document.createElement('section');
+                    resultSection.classList.add('result-divider');
+                
+                    // Dodajemy tytuł sekcji
+                    const resultTitle = document.createElement('span');
+                    resultTitle.textContent = 'Wyniki';
+                    resultSection.appendChild(resultTitle);
+                
+                    // Tworzymy kontener na wyniki
+                    const resultsContainer = document.createElement('div');
+                    resultsContainer.classList.add('results-container');
+                
+                    // Dodajemy punkty do kontenera
+                    for (let i = 11; i <= 14; i++) {
+                        if (match[i] && typeof match[i] === 'string' && match[i].includes('/')) {
+                            const [totalPoints, roundPoints] = match[i].split('/').map(Number);
+                
+                            const pointsDiv = document.createElement('div');
+                            pointsDiv.classList.add('points');
+                            pointsDiv.innerHTML = `
+                                <span style="color: white; font-size: 14px;">${totalPoints}</span>
+                                <span style="color: green; font-size: 12px;">+${roundPoints}</span>
+                            `;
+                            resultsContainer.appendChild(pointsDiv);
+                        } else {
+                            console.warn(`match[${i}] jest nieprawidłowe lub nie zawiera oczekiwanych danych:`, match[i]);
+                        }
+                    }
+                
+                    // Dodajemy kontener z wynikami do sekcji
+                    resultSection.appendChild(resultsContainer);
+                
+                    // Dodajemy sekcję do kontenera z meczami
+                    matchesContainer.appendChild(resultSection);
+                
                     currentKolejka++;
                     createKolejkaSection(currentKolejka);
                 }
