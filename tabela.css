@@ -972,6 +972,14 @@ font-size: 20px;
     font-weight: bold;
 }
 
+.firstGameRes {
+    text-align: center; /* Wyśrodkowanie tekstu */
+    font-size: 13px;
+    order: 1; /* Ustawienie kolejności, by pojawił się pod logo */
+    color: #8e9399;
+    font-weight: bold;
+}
+
 
 .league-name {
     text-align:center;
