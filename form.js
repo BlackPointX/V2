@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             betLigaRow.classList.add('row');
 
             const betLigaLink = document.createElement('a');
-            betLigaLink.href = 'https://forms.gle/hiR9eYNAcUHzjpLU7';
+            betLigaLink.href = 'https://forms.gle/w2dMc7Yr5rZ5F48GA';
             betLigaLink.textContent = 'Formularz BetLiga';
             betLigaLink.classList.add('link');
             betLigaRow.appendChild(betLigaLink);
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             lmRow.classList.add('row');
 
             const lmLink = document.createElement('a');
-            lmLink.href = 'https://forms.gle/rWiEyzERLRUPRnqh8';
+            lmLink.href = 'https://forms.gle/spznBTGMgj2h6Ai76';
             lmLink.textContent = 'Formularz LM';
             lmLink.classList.add('link');
             lmRow.appendChild(lmLink);
